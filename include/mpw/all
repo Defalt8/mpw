@@ -1,0 +1,10 @@
+#pragma once
+#ifndef MPW_ALL
+#define MPW_ALL
+
+#include "common"
+#include "enums"
+#include "event"
+#include "window"
+
+#endif // MPW_ALL

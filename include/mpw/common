@@ -1,0 +1,34 @@
+#pragma once
+#ifndef MPW_COMMON
+#define MPW_COMMON
+
+#include <ds/string>
+#include <glfl/core.hpp>
+
+namespace mpw {
+
+struct _glfl_loader
+{
+	struct load_failure : public ds::exception
+	{
+		char const *
+		what() const noexcept override
+		{
+			return "glfl::load failed";
+		}
+	};
+
+	_glfl_loader()
+	{
+		auto glfl_load = glfl::load();
+		ds_throw_if(glfl_load, load_failure());
+		ds_throw_alt(assert(glfl_load));
+	}
+
+};
+
+static _glfl_loader _glfl_loader_si();
+
+} // namespace mpw
+
+#endif // MPW_COMMON

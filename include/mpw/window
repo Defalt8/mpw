@@ -1,0 +1,31 @@
+#pragma once
+#ifndef MPW_WINDOW
+#define MPW_WINDOW
+
+#include "common"
+#include "enums"
+#include "event"
+
+namespace mpw {
+
+class Window
+{
+	ds::string<> _title;
+	int _width;
+	int _height;
+
+ public:
+	Window(ds::string<> title_, int width_, int height_)
+		: _title  { ds::move(title_) }
+		, _width  { width_ }
+		, _height { height_ }
+	{}
+	
+};
+
+using window = Window;
+
+} // namespace mpw
+
+
+#endif // MPW_WINDOW

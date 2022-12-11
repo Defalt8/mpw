@@ -1,0 +1,12 @@
+#pragma once
+#ifndef MPW_EVENT
+#define MPW_EVENT
+
+#include "common"
+
+namespace mpw {
+
+} // namespace mpw
+
+
+#endif // MPW_EVENT

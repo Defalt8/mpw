@@ -1,0 +1,12 @@
+#pragma once
+#ifndef MPW_ENUMS
+#define MPW_ENUMS
+
+#include "common"
+
+namespace mpw {
+
+} // namespace mpw
+
+
+#endif // MPW_ENUMS
