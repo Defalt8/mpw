@@ -1,3 +1,6 @@
 [submodule "dep/dspp"]
 	path = dep/dspp
 	url = https://github.com/defalt8/dspp
+[submodule "dep/glfl"]
+	path = dep/glfl
+	url = https://github.com/defalt8/glfl
