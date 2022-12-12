@@ -7,6 +7,7 @@ set( MPW_HEADER_FILES
 	include/mpw/common
 	include/mpw/enums
 	include/mpw/events
+	include/mpw/display
 	include/mpw/window
 	include/mpw/all
 )
@@ -17,6 +18,11 @@ add_subdirectory( dep/glfl dep_glfl )
 add_library( mpw INTERFACE )
 target_include_directories( mpw INTERFACE include dep/dspp/include dep/glfl/include )
 target_link_libraries( mpw INTERFACE dspp glfl )
+if( WIN32 )
+	target_link_libraries( mpw INTERFACE opengl32 )
+else()
+	target_link_libraries( mpw INTERFACE X11 GL )
+endif()
 install( FILES ${MPW_HEADER_FILES} DESTINATION include/mpw )
 
 if( BUILD_TESTS 

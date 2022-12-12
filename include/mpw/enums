@@ -4,9 +4,9 @@
 
 #include "common"
 
-namespace mpw {
+namespace mw {
 
-} // namespace mpw
+} // namespace mw
 
 
 #endif // MPW_ENUMS

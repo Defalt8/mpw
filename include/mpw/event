@@ -3,10 +3,85 @@
 #define MPW_EVENT
 
 #include "common"
+#include "display"
+#include "window"
 
-namespace mpw {
+namespace mw {
 
-} // namespace mpw
+enum class event_type
+{
+	unknown,
+	quit,
+	mouse,
+	key,
+	window,
+};
+
+struct Event
+{
+  #ifdef _WIN32
+  #else
+  	::XEvent _xevent {};
+  #endif
+	Display  * display = nullptr;
+	event_type type    = event_type::unknown;
+};
+
+using event = Event;
+
+static bool
+next_event(Display & display_, Event & event_, bool await_) noexcept(false)
+{
+  #ifdef _WIN32
+  #else
+	if(display_._xdisplay == nullptr)
+	{
+		ds_throw(invalid_display());
+		assert(display_._xdisplay != nullptr);
+		ds_throw_alt(return false);
+	}
+	else
+	{
+		event_.display = &display_;
+		if(!await_ && XPending(display_._xdisplay) <= 0)
+			return false;
+		else if(::XNextEvent(display_._xdisplay, &event_._xevent) == 0)
+			return true;
+	}
+  #endif
+	return false;
+}
+
+static bool
+process_event(Event & event_) noexcept(false)
+{
+  #ifdef _WIN32
+  #else
+	if(event_.display == nullptr || event_.display->_xdisplay == nullptr)
+	{
+		ds_throw(invalid_display());
+		assert(event_.display != nullptr && event_.display->_xdisplay != nullptr);
+		ds_throw_alt(return false);
+	}
+	else
+	{
+		auto xwindow_ = event_._xevent.xany.window;
+		if(xwindow_ != Window::_invalid_xwindow)
+		{
+			auto it = Window::_map.get(xwindow_);
+			if(it && it->value)
+			{
+				auto & window = it->value;
+				window->_handle_xevent(event_._xevent);
+			}
+		}
+		return true;
+	}
+  #endif
+	return false;
+}
+
+} // namespace mw
 
 
 #endif // MPW_EVENT

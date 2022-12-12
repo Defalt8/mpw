@@ -5,6 +5,7 @@
 #include "common"
 #include "enums"
 #include "event"
+#include "display"
 #include "window"
 
 #endif // MPW_ALL

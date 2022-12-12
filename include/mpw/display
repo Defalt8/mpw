@@ -1,0 +1,78 @@
+#pragma once
+#ifndef MPW_DISPLAY
+#define MPW_DISPLAY
+
+#include "common"
+
+namespace mw {
+
+struct invalid_display : public ds::exception
+{
+	char const *
+	what() const noexcept
+	{
+		return "invalid display";
+	}
+};
+
+struct open_display_failure : public ds::exception
+{
+	char const *
+	what() const noexcept
+	{
+		return "open display failure";
+	}
+};
+
+class Display
+{
+ public:
+  #ifdef _WIN32
+  #else
+  	::Display * _xdisplay;
+  #endif
+
+	friend class Window;
+	friend bool next_event(Display & display, Event & event, bool await_) noexcept(false);
+	friend bool process_event(Event & event) noexcept(false);
+
+ public:
+	~Display() noexcept
+	{
+	  #ifdef _WIN32
+	  #else
+		if(_xdisplay != nullptr)
+			XCloseDisplay(_xdisplay);
+	  #endif
+	}
+
+	Display(char const * display_id_ = nullptr) noexcept(false)
+	  #ifdef _WIN32
+	  #else
+		: _xdisplay { XOpenDisplay(display_id_) }
+	  #endif
+	{
+		ds_throw_if(_xdisplay == nullptr, open_display_failure());
+		ds_throw_alt(assert(_xdisplay != nullptr));
+	}
+
+	void
+	close() noexcept
+	{
+	  #ifdef _WIN32
+	  #else
+		if(_xdisplay != nullptr)
+		{
+			XCloseDisplay(_xdisplay);
+			_xdisplay = nullptr;
+		}
+	  #endif
+	}
+
+};
+
+using display = Display;
+
+} // namespace mw
+
+#endif // MPW_DISPLAY

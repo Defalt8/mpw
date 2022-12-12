@@ -2,30 +2,349 @@
 #ifndef MPW_WINDOW
 #define MPW_WINDOW
 
+#include <ds/unordered_map>
+#include <ds/callable>
 #include "common"
 #include "enums"
+#include "display"
 #include "event"
+#include "window"
 
-namespace mpw {
+#ifdef _WIN32
+#else
+struct GLXContext_;
+#endif
+
+namespace mw {
+
+namespace _glx {
+
+#ifdef _WIN32
+#else
+
+	static constexpr int GLX_USE_GL_            = 1;
+	static constexpr int GLX_BUFFER_SIZE_       = 2;
+	static constexpr int GLX_LEVEL_             = 3;   
+	static constexpr int GLX_RGBA_              = 4;   
+	static constexpr int GLX_DOUBLEBUFFER_      = 5;
+	static constexpr int GLX_STEREO_            = 6;
+	static constexpr int GLX_AUX_BUFFERS_       = 7;
+	static constexpr int GLX_RED_SIZE_          = 8;
+	static constexpr int GLX_GREEN_SIZE_        = 9;
+	static constexpr int GLX_BLUE_SIZE_         = 10;
+	static constexpr int GLX_ALPHA_SIZE_        = 11;
+	static constexpr int GLX_DEPTH_SIZE_        = 12;
+	static constexpr int GLX_STENCIL_SIZE_      = 13;
+	static constexpr int GLX_ACCUM_RED_SIZE_    = 14;
+	static constexpr int GLX_ACCUM_GREEN_SIZE_  = 15;
+	static constexpr int GLX_ACCUM_BLUE_SIZE_   = 16;
+	static constexpr int GLX_ACCUM_ALPHA_SIZE_  = 17;
+
+	static constexpr int GLX_BAD_SCREEN_        = 1;
+	static constexpr int GLX_BAD_ATTRIBUTE_     = 2;
+	static constexpr int GLX_NO_EXTENSION_      = 3;
+	static constexpr int GLX_BAD_VISUAL_        = 4;
+	static constexpr int GLX_BAD_CONTEXT_       = 5;
+	static constexpr int GLX_BAD_VALUE_         = 6;
+	static constexpr int GLX_BAD_ENUM_          = 7;
+
+	using Display     = ::Display;
+	using XID         = size_t;
+	using GLXContext  = struct GLXContext_ *;
+	using GLXPixmap   = XID;
+	using GLXDrawable = XID;
+
+	using glx_proc_t = void (*)(void);
+	extern "C" glx_proc_t    glXGetProcAddress(unsigned char const * proc_name);
+	extern "C" XVisualInfo * glXChooseVisual(Display *dpy, int screen, int *attribList);
+	extern "C" GLXContext    glXCreateContext(Display *dpy, XVisualInfo *vis, GLXContext shareList, Bool direct);
+	extern "C" void          glXDestroyContext(Display *dpy, GLXContext ctx);
+	extern "C" Bool          glXMakeCurrent(Display *dpy, GLXDrawable drawable, GLXContext ct);
+	extern "C" void          glXCopyContext(Display *dpy, GLXContext src, GLXContext dst, unsigned long mask);
+	extern "C" void          glXSwapBuffers(Display *dpy, GLXDrawable drawable);
+	extern "C" GLXPixmap     glXCreateGLXPixmap(Display *dpy, XVisualInfo *visual, Pixmap pixmap);
+	extern "C" void          glXDestroyGLXPixmap(Display *dpy, GLXPixmap pixmap);
+	extern "C" Bool          glXQueryExtension(Display *dpy, int *errorb, int *event);
+	extern "C" Bool          glXQueryVersion(Display *dpy, int *maj, int *min);
+	extern "C" Bool          glXIsDirect(Display *dpy, GLXContext ctx);
+	extern "C" int           glXGetConfig(Display *dpy, XVisualInfo *visual, int attrib, int *value);
+	extern "C" GLXContext    glXGetCurrentContext();
+	extern "C" GLXDrawable   glXGetCurrentDrawable();
+	extern "C" void          glXWaitGL();
+	extern "C" void          glXWaitX();
+	extern "C" void          glXUseXFont(Font font, int first, int count, int list);
+
+#endif
+
+} // namespace _glx
+
+
+struct create_window_failure : public ds::exception
+{
+	char const *
+	what() const noexcept override
+	{
+		return "create window failure";
+	}
+};
+
+struct invalid_window : public ds::exception
+{
+	char const *
+	what() const noexcept override
+	{
+		return "invalid window";
+	}
+};
+
 
 class Window
 {
+	Display    * _display = nullptr;
 	ds::string<> _title;
-	int _width;
-	int _height;
+	int          _x      = 0;
+	int          _y      = 0;
+	int          _width  = 0;
+	int          _height = 0;
+  #ifdef _WIN32
+  #else
+ public:
+	static constexpr ::Window _invalid_xwindow = {};
+	::Window           _xwindow    = _invalid_xwindow;
+	_glx::GLXContext   _xcontext   = nullptr;
+ private:
+	bool               _destroying = false;
+	bool               _raised     = false;
+  #endif
+
+#ifndef _WIN32
+	static ds::unordered_map<32,::Window,Window *> _map;
+	
+	bool
+	_is_destroying() noexcept
+	{
+		return _destroying;
+	}
+	
+	void
+	_handle_xevent(::XEvent & xevent_) noexcept 
+	{
+		switch(xevent_.type)
+		{
+			case DestroyNotify:
+			case ClientMessage:
+			{
+				if(!_destroying)
+					this->destroy();
+				break;
+			}
+			case ConfigureNotify:
+			{
+				int x_ = xevent_.xconfigure.x;
+				int y_ = xevent_.xconfigure.y;
+				int width_  = xevent_.xconfigure.width;
+				int height_ = xevent_.xconfigure.height;
+				if(width_ != _width || height_ != _height)
+					this->_on_size(width_, height_);
+				if(_raised && (x_ != _x || y_ != _y))
+					this->_on_move(x_, y_);
+				break;
+			}
+		}
+	}
+
+#endif
+
+	friend bool process_event(Event & event) noexcept(false);
+
+	void 
+	_on_move(int x_, int y_) noexcept
+	{
+		_x  = x_;
+		_y = y_;
+		if(on_move)
+			on_move(_x, _y);
+	}
+
+	void 
+	_on_size(int width_, int height_) noexcept
+	{
+		_width  = width_;
+		_height = height_;
+		if(on_size)
+			on_size(_width, _height);
+	}
 
  public:
-	Window(ds::string<> title_, int width_, int height_)
-		: _title  { ds::move(title_) }
-		, _width  { width_ }
-		, _height { height_ }
+	ds::callable<void(int,int)> on_move;
+	ds::callable<void(int,int)> on_size;
+
+ public:
+	~Window() noexcept
+	{
+		this->destroy();
+	}
+
+	Window(Display & display_, ds::string<> title_, int width_, int height_) noexcept(false)
+		: _display { &display_ }
+		, _title   { ds::move(title_) }
+  #ifdef _WIN32
 	{}
+  #else
+	{
+		ds_throw_if(display_._xdisplay == nullptr, invalid_display());
+		ds_throw_if_alt(display_._xdisplay == nullptr, assert(display_._xdisplay != nullptr); return);
+		using namespace mw::_glx;
+		int attributes_[] = { GLX_RGBA_, GLX_DEPTH_SIZE_, 24, GLX_DOUBLEBUFFER_, None };
+		auto * xdisplay_  = display_._xdisplay;
+		auto * visual_    = glXChooseVisual(xdisplay_, 0, attributes_);
+		ds_throw_if(visual_ == nullptr, create_window_failure());
+		ds_throw_if_alt(visual_ == nullptr, assert(visual_ != nullptr); return);
+		{
+			XSetWindowAttributes swa;
+			auto root_ = DefaultRootWindow(xdisplay_);
+			swa.colormap   = XCreateColormap(xdisplay_, root_, visual_->visual, AllocNone);
+			swa.event_mask = Expose | StructureNotifyMask | VisibilityChangeMask | ClientMessage;
+			// swa.override_redirect  = True;
+			unsigned long swa_mask = CWColormap | CWEventMask; 
+			// swa_mask |= CWOverrideRedirect;
+			_xwindow   = XCreateWindow(xdisplay_, root_, 0, 0, width_, height_, 0, visual_->depth
+									, InputOutput, visual_->visual, swa_mask, &swa);
+			ds_throw_if(_xwindow == _invalid_xwindow, create_window_failure());
+			ds_throw_if_alt(_xwindow == _invalid_xwindow, assert(_xwindow != _invalid_xwindow); return);
+			auto window_closed_ = XInternAtom(xdisplay_, "WM_DELETE_WINDOW", True);
+			XSetWMProtocols(xdisplay_, _xwindow, &window_closed_, 1);
+			XStoreName(xdisplay_, _xwindow, _title.begin());
+			XClearWindow(xdisplay_, _xwindow);
+		}
+		{
+			_xcontext = glXCreateContext(xdisplay_, visual_, nullptr, 1);
+			ds_throw_if(_xcontext == nullptr, create_window_failure());
+			ds_throw_if_alt(_xcontext == nullptr, assert(_xcontext != nullptr));
+			glXMakeCurrent(xdisplay_, _xwindow, _xcontext);
+		}
+		_map.set(_xwindow, this);
+	}
+  #endif
 	
+	void 
+	destroy() noexcept
+	{
+	  #ifdef _WIN32
+	  #else
+		auto display_valid_ = _display != nullptr && _display->_xdisplay != nullptr;
+		if(_xcontext != nullptr)
+		{
+			if(display_valid_)
+			{
+				using namespace mw::_glx;
+				glXMakeCurrent(_display->_xdisplay, None, nullptr);
+				glXDestroyContext(_display->_xdisplay, _xcontext);
+			}
+			_xcontext = nullptr;
+		}
+	  	if(_xwindow != _invalid_xwindow)
+		{
+			if(display_valid_)
+			{
+				_destroying = true;
+				XDestroyWindow(_display->_xdisplay, _xwindow);
+				_destroying = false;
+			}
+			_map.remove(_xwindow);
+			_xwindow = _invalid_xwindow;
+		}
+	  #endif
+	}
+
+	bool
+	show() noexcept(false)
+	{
+		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
+		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
+		ds_throw_if(_xwindow == _invalid_xwindow, invalid_window());
+		ds_throw_if_alt(_xwindow == _invalid_xwindow, assert(_xwindow != _invalid_xwindow); return false);
+		if(XMapRaised(_display->_xdisplay, _xwindow) != False)
+		{
+			_raised = true;
+			return true;
+		}
+		return false;
+	}
+
+	void
+	swap()
+	{
+	  #ifdef _WIN32
+	  #else
+		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
+		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
+		ds_throw_if(_xwindow == _invalid_xwindow, invalid_window());
+		ds_throw_if_alt(_xwindow == _invalid_xwindow, assert(_xwindow != _invalid_xwindow); return false);
+		using namespace mw::_glx;
+		if(_display != nullptr && _display->_xdisplay != nullptr)
+			glXSwapBuffers(_display->_xdisplay, _xwindow);
+	  #endif
+	}
+
+	bool
+	make_current() noexcept
+	{
+	  #ifdef _WIN32
+	  #else
+		using namespace mw::_glx;
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _invalid_xwindow)
+		{
+			if(glXGetCurrentContext() == _xcontext)
+				return true;
+			else
+				return glXMakeCurrent(_display->_xdisplay, _xwindow, _xcontext) != False;
+		}
+	  #endif
+		return false;
+	}
+
+	bool 
+	set_position(int x_, int y_) noexcept
+	{
+	  #ifdef _WIN32
+	  #else
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _invalid_xwindow)
+			return XMoveWindow(_display->_xdisplay, _xwindow, x_, y_) == 0;
+	  #endif
+		return false;
+	}
+
+	bool 
+	set_size(int width_, int height_) noexcept
+	{
+	  #ifdef _WIN32
+	  #else
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _invalid_xwindow)
+			return XResizeWindow(_display->_xdisplay, _xwindow, width_, height_) == 0;
+	  #endif
+		return false;
+	}
+
+	int width()  const noexcept { return _width; }
+	int height() const noexcept { return _height; }
+
+  #ifdef _WIN32
+  #else
+	bool operator!() noexcept { return _xwindow == _invalid_xwindow; }
+	explicit operator bool()       noexcept { return _xwindow != _invalid_xwindow; }
+	explicit operator bool() const noexcept { return _xwindow != _invalid_xwindow; }
+  #endif
+
 };
+
+#ifndef _WIN32
+ds::unordered_map<32,::Window,Window *> Window::_map;
+#endif
 
 using window = Window;
 
-} // namespace mpw
+} // namespace mw
 
 
 #endif // MPW_WINDOW
