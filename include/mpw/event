@@ -20,6 +20,8 @@ enum class event_type
 struct Event
 {
   #ifdef _WIN32
+	using MSG = mw::_win::MSG;
+	MSG      _winmsg {};
   #else
   	::XEvent _xevent {};
   #endif
@@ -33,6 +35,11 @@ static bool
 next_event(Display & display_, Event & event_, bool await_) noexcept(false)
 {
   #ifdef _WIN32
+	using namespace mw::_win;
+	if(await_)
+		return GetMessageA(&event_._winmsg, NULL, 0, 0) != 0;
+	else
+		return PeekMessageA(&event_._winmsg, NULL, 0, 0, PM_REMOVE_) != 0;
   #else
 	if(display_._xdisplay == nullptr)
 	{
@@ -56,6 +63,12 @@ static bool
 process_event(Event & event_) noexcept(false)
 {
   #ifdef _WIN32
+	{
+		using namespace mw::_win;
+		TranslateMessage(&event_._winmsg);
+		DispatchMessageA(&event_._winmsg);
+		return event_._winmsg.message != WM_QUIT_;
+	}
   #else
 	if(event_.display == nullptr || event_.display->_xdisplay == nullptr)
 	{

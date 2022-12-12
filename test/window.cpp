@@ -1,6 +1,8 @@
-#include <ds/all>
-#include <glfl/core.hpp>
 #include <mpw/all>
+#include <ds/all>
+
+namespace win { using namespace mw::_win; }
+
 
 int main()
 {

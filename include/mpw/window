@@ -2,7 +2,9 @@
 #ifndef MPW_WINDOW
 #define MPW_WINDOW
 
+#ifndef _WIN32
 #include <ds/unordered_map>
+#endif
 #include <ds/callable>
 #include "common"
 #include "enums"
@@ -11,16 +13,420 @@
 #include "window"
 
 #ifdef _WIN32
+	struct HMODULE__;
+	struct HWND__;
+	struct HGLRC__;
+	struct HDC__;
+	struct HINSTANCE__;
+	struct HICON__;
+	struct HCURSOR__;
+	struct HBRUSH__;
+	struct HMENU__;
+	struct HCURSOR__;
+	struct HICON__;
 #else
-struct GLXContext_;
+	struct GLXContext_;
 #endif
 
 namespace mw {
 
-namespace _glx {
-
 #ifdef _WIN32
+#	if defined(_DLL)
+#		define MPW_WINAPI extern "C" __declspec(dllimport)
+#	else
+#		define MPW_WINAPI extern "C"
+#	endif
+
+namespace _win {
+
+  #if defined(_WIN64)
+    using INT_PTR   = long long;
+    using UINT_PTR  = unsigned long long;
+    using LONG_PTR  = long long;
+    using ULONG_PTR = unsigned long long;
+  #else
+    using INT_PTR   = int;
+    using UINT_PTR  = unsigned int;
+    using LONG_PTR  = long;
+    using ULONG_PTR = unsigned long;
+  #endif
+	using BOOL      = int;
+	using BYTE      = unsigned char;
+	using WORD      = unsigned short;
+	using CHAR      = char;
+	using SHORT     = short;
+	using USHORT    = unsigned short;
+	using LONG      = long;
+	using INT       = int;
+	using UINT      = unsigned int;
+	using DWORD     = unsigned long;
+	using ATOM      = WORD;
+	using LONG      = long;
+	using WPARAM    = UINT_PTR;
+	using LPARAM    = LONG_PTR;
+	using LRESULT   = LONG_PTR;
+	using LPCSTR    = char const *;
+	using HANDLE    = void *;
+	using HMODULE   = HMODULE__ *;
+	using HWND      = HWND__ *;
+	using HGLRC     = HGLRC__ *;
+	using HDC       = HDC__ *;
+	using HINSTANCE = HINSTANCE__ *;
+	using HICON     = HICON__ *;
+	using HCURSOR   = HCURSOR__ *;
+	using HBRUSH    = HBRUSH__ *;
+	using HMENU     = HMENU__ *;
+	using HCURSOR   = HCURSOR__ *;
+	using HICON     = HICON__ *;
+	using FARPROC   = INT_PTR (__stdcall *)(); 
+	using PROC      = INT_PTR (__stdcall *)(); 
+	using WNDPROC   = LRESULT (__stdcall *)(HWND, UINT, WPARAM, LPARAM);
+
+	struct POINT 
+	{
+		LONG x;
+		LONG y;
+	};
+
+	struct RECT
+	{
+		LONG left;
+		LONG top;
+		LONG right;
+		LONG bottom;
+	};
+
+	struct WNDCLASSEXA 
+	{
+		UINT        cbSize;
+		UINT        style;
+		WNDPROC     lpfnWndProc;
+		int         cbClsExtra;
+		int         cbWndExtra;
+		HINSTANCE   hInstance;
+		HICON       hIcon;
+		HCURSOR     hCursor;
+		HBRUSH      hbrBackground;
+		LPCSTR      lpszMenuName;
+		LPCSTR      lpszClassName;
+		HICON       hIconSm;
+	};
+
+	struct PIXELFORMATDESCRIPTOR
+	{
+		WORD  nSize;
+		WORD  nVersion;
+		DWORD dwFlags;
+		BYTE  iPixelType;
+		BYTE  cColorBits;
+		BYTE  cRedBits;
+		BYTE  cRedShift;
+		BYTE  cGreenBits;
+		BYTE  cGreenShift;
+		BYTE  cBlueBits;
+		BYTE  cBlueShift;
+		BYTE  cAlphaBits;
+		BYTE  cAlphaShift;
+		BYTE  cAccumBits;
+		BYTE  cAccumRedBits;
+		BYTE  cAccumGreenBits;
+		BYTE  cAccumBlueBits;
+		BYTE  cAccumAlphaBits;
+		BYTE  cDepthBits;
+		BYTE  cStencilBits;
+		BYTE  cAuxBuffers;
+		BYTE  iLayerType;
+		BYTE  bReserved;
+		DWORD dwLayerMask;
+		DWORD dwVisibleMask;
+		DWORD dwDamageMask;
+	};
+		
+	struct MSG 
+	{
+		HWND        hwnd;
+		UINT        message;
+		WPARAM      wParam;
+		LPARAM      lParam;
+		DWORD       time;
+		POINT       pt;
+	};
+
+	struct MINMAXINFO 
+	{
+		POINT ptReserved;
+		POINT ptMaxSize;
+		POINT ptMaxPosition;
+		POINT ptMinTrackSize;
+		POINT ptMaxTrackSize;
+	};
+
+	static constexpr  int   CW_USEDEFAULT_             = ((int)0x80000000);
+	static constexpr  DWORD CS_OWNDC_                  = 0x0020;
+	static constexpr  DWORD COLOR_WINDOW_              = 5;
+	static constexpr  BYTE  PFD_TYPE_RGBA_             = 0;
+	static constexpr  BYTE  PFD_TYPE_COLORINDEX_       = 1;
+	static constexpr  BYTE  PFD_MAIN_PLANE_            = 0;
+	static constexpr  BYTE  PFD_OVERLAY_PLANE_         = 1;
+	static constexpr  BYTE  PFD_UNDERLAY_PLANE_        = BYTE(-1);
+	static constexpr  DWORD PFD_DOUBLEBUFFER_          = 0x00000001;
+	static constexpr  DWORD PFD_STEREO_                = 0x00000002;
+	static constexpr  DWORD PFD_DRAW_TO_WINDOW_        = 0x00000004;
+	static constexpr  DWORD PFD_DRAW_TO_BITMAP_        = 0x00000008;
+	static constexpr  DWORD PFD_SUPPORT_GDI_           = 0x00000010;
+	static constexpr  DWORD PFD_SUPPORT_OPENGL_        = 0x00000020;
+	static constexpr  DWORD PFD_GENERIC_FORMAT_        = 0x00000040;
+	static constexpr  DWORD PFD_NEED_PALETTE_          = 0x00000080;
+	static constexpr  DWORD PFD_NEED_SYSTEM_PALETTE_   = 0x00000100;
+	static constexpr  DWORD PFD_SWAP_EXCHANGE_         = 0x00000200;
+	static constexpr  DWORD PFD_SWAP_COPY_             = 0x00000400;
+	static constexpr  DWORD PFD_SWAP_LAYER_BUFFERS_    = 0x00000800;
+	static constexpr  DWORD PFD_GENERIC_ACCELERATED_   = 0x00001000;
+	static constexpr  DWORD PFD_SUPPORT_DIRECTDRAW_    = 0x00002000;
+	static constexpr  DWORD PFD_DIRECT3D_ACCELERATED_  = 0x00004000;
+	static constexpr  DWORD PFD_SUPPORT_COMPOSITION_   = 0x00008000;
+	static constexpr  DWORD PFD_DEPTH_DONTCARE_        = 0x20000000;
+	static constexpr  DWORD PFD_DOUBLEBUFFER_DONTCARE_ = 0x40000000;
+	static constexpr  DWORD PFD_STEREO_DONTCARE_       = 0x80000000;
+
+	static constexpr  WORD  SWP_NOSIZE_          = 0x0001;
+	static constexpr  WORD  SWP_NOMOVE_          = 0x0002;
+	static constexpr  WORD  SWP_NOZORDER_        = 0x0004;
+	static constexpr  WORD  SWP_NOREDRAW_        = 0x0008;
+	static constexpr  WORD  SWP_NOACTIVATE_      = 0x0010;
+	static constexpr  WORD  SWP_FRAMECHANGED_    = 0x0020;
+	static constexpr  WORD  SWP_SHOWWINDOW_      = 0x0040;
+	static constexpr  WORD  SWP_HIDEWINDOW_      = 0x0080;
+	static constexpr  WORD  SWP_NOCOPYBITS_      = 0x0100;
+	static constexpr  WORD  SWP_NOOWNERZORDER_   = 0x0200;
+	static constexpr  WORD  SWP_NOSENDCHANGING_  = 0x0400;
+	static constexpr  WORD  SWP_DRAWFRAME_       = SWP_FRAMECHANGED_;
+	static constexpr  WORD  SWP_NOREPOSITION_    = SWP_NOOWNERZORDER_;
+
+	static constexpr  DWORD SIZE_RESTORED_       = 0;
+	static constexpr  DWORD SIZE_MINIMIZED_      = 1;
+	static constexpr  DWORD SIZE_MAXIMIZED_      = 2;
+	static constexpr  DWORD SIZE_MAXSHOW_        = 3;
+	static constexpr  DWORD SIZE_MAXHIDE_        = 4;
+	static constexpr  DWORD WS_OVERLAPPED_        = 0x00000000L;
+	static constexpr  DWORD WS_POPUP_             = 0x80000000L;
+	static constexpr  DWORD WS_CHILD_             = 0x40000000L;
+	static constexpr  DWORD WS_MINIMIZE_          = 0x20000000L;
+	static constexpr  DWORD WS_VISIBLE_           = 0x10000000L;
+	static constexpr  DWORD WS_DISABLED_          = 0x08000000L;
+	static constexpr  DWORD WS_CLIPSIBLINGS_      = 0x04000000L;
+	static constexpr  DWORD WS_CLIPCHILDREN_      = 0x02000000L;
+	static constexpr  DWORD WS_MAXIMIZE_          = 0x01000000L;
+	static constexpr  DWORD WS_CAPTION_           = 0x00C00000L;
+	static constexpr  DWORD WS_BORDER_            = 0x00800000L;
+	static constexpr  DWORD WS_DLGFRAME_          = 0x00400000L;
+	static constexpr  DWORD WS_VSCROLL_           = 0x00200000L;
+	static constexpr  DWORD WS_HSCROLL_           = 0x00100000L;
+	static constexpr  DWORD WS_SYSMENU_           = 0x00080000L;
+	static constexpr  DWORD WS_THICKFRAME_        = 0x00040000L;
+	static constexpr  DWORD WS_GROUP_             = 0x00020000L;
+	static constexpr  DWORD WS_TABSTOP_           = 0x00010000L;
+	static constexpr  DWORD WS_MINIMIZEBOX_       = 0x00020000L;
+	static constexpr  DWORD WS_MAXIMIZEBOX_       = 0x00010000L;
+	static constexpr  DWORD WS_TILED_             = WS_OVERLAPPED_;
+	static constexpr  DWORD WS_ICONIC_            = WS_MINIMIZE_;
+	static constexpr  DWORD WS_SIZEBOX_           = WS_THICKFRAME_;
+	static constexpr  DWORD WS_OVERLAPPEDWINDOW_  =
+		  WS_OVERLAPPED_
+		| WS_CAPTION_
+		| WS_SYSMENU_
+		| WS_THICKFRAME_
+		| WS_MINIMIZEBOX_
+		| WS_MAXIMIZEBOX_;
+	static constexpr  DWORD WS_POPUPWINDOW_       = 
+		  WS_POPUP_
+        | WS_BORDER_
+        | WS_SYSMENU_;
+	static constexpr  DWORD WS_TILEDWINDOW_       = WS_OVERLAPPEDWINDOW_;
+	static constexpr  DWORD PM_NOREMOVE_          = 0x0000;
+	static constexpr  DWORD PM_REMOVE_            = 0x0001;
+	static constexpr  DWORD PM_NOYIELD_           = 0x0002;
+	static constexpr  DWORD WM_NULL_              = 0x0000;
+	static constexpr  DWORD WM_CREATE_            = 0x0001;
+	static constexpr  DWORD WM_DESTROY_           = 0x0002;
+	static constexpr  DWORD WM_MOVE_              = 0x0003;
+	static constexpr  DWORD WM_SIZE_              = 0x0005;
+	static constexpr  DWORD WM_ACTIVATE_          = 0x0006;
+	static constexpr  DWORD WA_INACTIVE_          = 0;
+	static constexpr  DWORD WA_ACTIVE_            = 1;
+	static constexpr  DWORD WA_CLICKACTIVE_       = 2;
+	static constexpr  DWORD WM_SETFOCUS_          = 0x0007;
+	static constexpr  DWORD WM_KILLFOCUS_         = 0x0008;
+	static constexpr  DWORD WM_ENABLE_            = 0x000A;
+	static constexpr  DWORD WM_SETREDRAW_         = 0x000B;
+	static constexpr  DWORD WM_SETTEXT_           = 0x000C;
+	static constexpr  DWORD WM_GETTEXT_           = 0x000D;
+	static constexpr  DWORD WM_GETTEXTLENGTH_     = 0x000E;
+	static constexpr  DWORD WM_PAINT_             = 0x000F;
+	static constexpr  DWORD WM_CLOSE_             = 0x0010;
+	static constexpr  DWORD WM_QUIT_              = 0x0012;
+	static constexpr  DWORD WM_ERASEBKGND_        = 0x0014;
+	static constexpr  DWORD WM_SYSCOLORCHANGE_    = 0x0015;
+	static constexpr  DWORD WM_SHOWWINDOW_        = 0x0018;
+	static constexpr  DWORD WM_WININICHANGE_      = 0x001A;
+	static constexpr  DWORD WM_DEVMODECHANGE_     = 0x001B;
+	static constexpr  DWORD WM_ACTIVATEAPP_       = 0x001C;
+	static constexpr  DWORD WM_FONTCHANGE_        = 0x001D;
+	static constexpr  DWORD WM_TIMECHANGE_        = 0x001E;
+	static constexpr  DWORD WM_CANCELMODE_        = 0x001F;
+	static constexpr  DWORD WM_SETCURSOR_         = 0x0020;
+	static constexpr  DWORD WM_MOUSEACTIVATE_     = 0x0021;
+	static constexpr  DWORD WM_CHILDACTIVATE_     = 0x0022;
+	static constexpr  DWORD WM_QUEUESYNC_         = 0x0023;
+	static constexpr  DWORD WM_GETMINMAXINFO_     = 0x0024;
+	static constexpr  DWORD WM_PAINTICON_         = 0x0026;
+	static constexpr  DWORD WM_ICONERASEBKGND_    = 0x0027;
+	static constexpr  DWORD WM_NEXTDLGCTL_        = 0x0028;
+	static constexpr  DWORD WM_SPOOLERSTATUS_     = 0x002A;
+	static constexpr  DWORD WM_DRAWITEM_          = 0x002B;
+	static constexpr  DWORD WM_MEASUREITEM_       = 0x002C;
+	static constexpr  DWORD WM_DELETEITEM_        = 0x002D;
+	static constexpr  DWORD WM_VKEYTOITEM_        = 0x002E;
+	static constexpr  DWORD WM_CHARTOITEM_        = 0x002F;
+	static constexpr  DWORD WM_SETFONT_           = 0x0030;
+	static constexpr  DWORD WM_GETFONT_           = 0x0031;
+	static constexpr  DWORD WM_SETHOTKEY_         = 0x0032;
+	static constexpr  DWORD WM_GETHOTKEY_         = 0x0033;
+	static constexpr  DWORD WM_QUERYDRAGICON_     = 0x0037;
+	static constexpr  DWORD WM_COMPAREITEM_       = 0x0039;
+	static constexpr  DWORD WM_COMPACTING_        = 0x0041;
+	static constexpr  DWORD WM_WINDOWPOSCHANGING_ = 0x0046;
+	static constexpr  DWORD WM_WINDOWPOSCHANGED_  = 0x0047;
+	static constexpr  DWORD WM_NCCREATE_          = 0x0081;
+	static constexpr  DWORD WM_NCDESTROY_         = 0x0082;
+	static constexpr  DWORD WM_NCCALCSIZE_        = 0x0083;
+	static constexpr  DWORD WM_NCHITTEST_         = 0x0084;
+	static constexpr  DWORD WM_NCPAINT_           = 0x0085;
+	static constexpr  DWORD WM_NCACTIVATE_        = 0x0086;
+	static constexpr  DWORD WM_GETDLGCODE_        = 0x0087;
+	static constexpr  DWORD WM_NCMOUSEMOVE_       = 0x00A0;
+	static constexpr  DWORD WM_NCLBUTTONDOWN_     = 0x00A1;
+	static constexpr  DWORD WM_NCLBUTTONUP_       = 0x00A2;
+	static constexpr  DWORD WM_NCLBUTTONDBLCLK_   = 0x00A3;
+	static constexpr  DWORD WM_NCRBUTTONDOWN_     = 0x00A4;
+	static constexpr  DWORD WM_NCRBUTTONUP_       = 0x00A5;
+	static constexpr  DWORD WM_NCRBUTTONDBLCLK_   = 0x00A6;
+	static constexpr  DWORD WM_NCMBUTTONDOWN_     = 0x00A7;
+	static constexpr  DWORD WM_NCMBUTTONUP_       = 0x00A8;
+	static constexpr  DWORD WM_NCMBUTTONDBLCLK_   = 0x00A9;
+	static constexpr  DWORD WM_KEYFIRST_          = 0x0100;
+	static constexpr  DWORD WM_KEYDOWN_           = 0x0100;
+	static constexpr  DWORD WM_KEYUP_             = 0x0101;
+	static constexpr  DWORD WM_CHAR_              = 0x0102;
+	static constexpr  DWORD WM_DEADCHAR_          = 0x0103;
+	static constexpr  DWORD WM_SYSKEYDOWN_        = 0x0104;
+	static constexpr  DWORD WM_SYSKEYUP_          = 0x0105;
+	static constexpr  DWORD WM_SYSCHAR_           = 0x0106;
+	static constexpr  DWORD WM_SYSDEADCHAR_       = 0x0107;
+	static constexpr  DWORD WM_INITDIALOG_        = 0x0110;
+	static constexpr  DWORD WM_COMMAND_           = 0x0111;
+	static constexpr  DWORD WM_SYSCOMMAND_        = 0x0112;
+	static constexpr  DWORD WM_TIMER_             = 0x0113;
+	static constexpr  DWORD WM_HSCROLL_           = 0x0114;
+	static constexpr  DWORD WM_VSCROLL_           = 0x0115;
+	static constexpr  DWORD WM_INITMENU_          = 0x0116;
+	static constexpr  DWORD WM_INITMENUPOPUP_     = 0x0117;
+	static constexpr  WORD  IDC_ARROW_            = 32512;
+	static constexpr  WORD  IDC_IBEAM_            = 32513;
+	static constexpr  WORD  IDC_WAIT_             = 32514;
+	static constexpr  WORD  IDC_CROSS_            = 32515;
+	static constexpr  WORD  IDC_UPARROW_          = 32516;
+	static constexpr  WORD  IDC_SIZE_             = 32640;
+	static constexpr  WORD  IDC_ICON_             = 32641;
+	static constexpr  WORD  IDC_SIZENWSE_         = 32642;
+	static constexpr  WORD  IDC_SIZENESW_         = 32643;
+	static constexpr  WORD  IDC_SIZEWE_           = 32644;
+	static constexpr  WORD  IDC_SIZENS_           = 32645;
+	static constexpr  WORD  IDC_SIZEALL_          = 32646;
+	static constexpr  WORD  IDC_NO_               = 32648;
+	static constexpr  WORD  IDI_APPLICATION_      = 32512;
+	static constexpr  WORD  IDI_HAND_             = 32513;
+	static constexpr  WORD  IDI_QUESTION_         = 32514;
+	static constexpr  WORD  IDI_EXCLAMATION_      = 32515;
+	static constexpr  WORD  IDI_ASTERISK_         = 32516;
+	static constexpr  int   GWL_WNDPROC_          = -4;
+	static constexpr  int   GWL_HINSTANCE_        = -6;
+	static constexpr  int   GWL_HWNDPARENT_       = -8;
+	static constexpr  int   GWL_STYLE_            = -16;
+	static constexpr  int   GWL_EXSTYLE_          = -20;
+	static constexpr  int   GWL_USERDATA_         = -21;
+	static constexpr  int   GWL_ID_               = -12;
+	static constexpr  int   GWLP_WNDPROC_         = -4;
+	static constexpr  int   GWLP_HINSTANCE_       = -6;
+	static constexpr  int   GWLP_HWNDPARENT_      = -8;
+	static constexpr  int   GWLP_USERDATA_        = -21;
+	static constexpr  int   GWLP_ID_              = -12;
+	static constexpr  int   SW_HIDE_              = 0;
+	static constexpr  int   SW_SHOWNORMAL_        = 1;
+	static constexpr  int   SW_NORMAL_            = 1;
+	static constexpr  int   SW_SHOWMINIMIZED_     = 2;
+	static constexpr  int   SW_SHOWMAXIMIZED_     = 3;
+	static constexpr  int   SW_MAXIMIZE_          = 3;
+	static constexpr  int   SW_SHOWNOACTIVATE_    = 4;
+	static constexpr  int   SW_SHOW_              = 5;
+	static constexpr  int   SW_MINIMIZE_          = 6;
+	static constexpr  int   SW_SHOWMINNOACTIVE_   = 7;
+	static constexpr  int   SW_SHOWNA_            = 8;
+	static constexpr  int   SW_RESTORE_           = 9;
+	static constexpr  int   SW_SHOWDEFAULT_       = 10;
+	static constexpr  int   SW_FORCEMINIMIZE_     = 11;
+	static constexpr  int   SW_MAX_               = 11;
+
+	static inline WORD _loword(DWORD dw) noexcept { return (dw & 0x0000FFFF); }
+	static inline WORD _hiword(DWORD dw) noexcept { return (dw & 0xFFFF0000) >> 16; }
+
+	MPW_WINAPI HMODULE  __stdcall LoadLibraryA(LPCSTR);
+	MPW_WINAPI BOOL     __stdcall FreeLibrary(HMODULE);
+	MPW_WINAPI FARPROC  __stdcall GetProcAddress(HMODULE, LPCSTR);
+	MPW_WINAPI BOOL     __stdcall wglCopyContext(HGLRC, HGLRC, UINT);
+	MPW_WINAPI HGLRC    __stdcall wglCreateContext(HDC);
+	MPW_WINAPI HGLRC    __stdcall wglCreateLayerContext(HDC, int);
+	MPW_WINAPI BOOL     __stdcall wglDeleteContext(HGLRC);
+	MPW_WINAPI HGLRC    __stdcall wglGetCurrentContext(void);
+	MPW_WINAPI HDC      __stdcall wglGetCurrentDC(void);
+	MPW_WINAPI PROC     __stdcall wglGetProcAddress(LPCSTR);
+	MPW_WINAPI BOOL     __stdcall wglMakeCurrent(HDC, HGLRC);
+	MPW_WINAPI BOOL     __stdcall wglShareLists(HGLRC, HGLRC);
+	MPW_WINAPI ATOM     __stdcall RegisterClassExA(WNDCLASSEXA const *);
+	MPW_WINAPI HMODULE  __stdcall GetModuleHandleA(LPCSTR);
+	MPW_WINAPI LRESULT  __stdcall DefWindowProcA(HWND, UINT, WPARAM, LPARAM);
+	MPW_WINAPI HWND     __stdcall CreateWindowExA(DWORD, LPCSTR, LPCSTR, DWORD, int, int, int, int, HWND, HMENU, HINSTANCE, void * param);
+	MPW_WINAPI int      __stdcall ReleaseDC(HWND, HDC);
+	MPW_WINAPI BOOL     __stdcall DestroyWindow(HWND);
+	MPW_WINAPI HDC      __stdcall GetDC(HWND);
+	MPW_WINAPI BOOL     __stdcall SetPixelFormat(HDC, int, PIXELFORMATDESCRIPTOR const *);
+	MPW_WINAPI int      __stdcall ChoosePixelFormat(HDC, PIXELFORMATDESCRIPTOR const *);
+	MPW_WINAPI int      __stdcall DescribePixelFormat(HDC, int, UINT, PIXELFORMATDESCRIPTOR *);
+	MPW_WINAPI LONG     __stdcall GetWindowLongA(HWND, int);
+	MPW_WINAPI LONG     __stdcall SetWindowLongA(HWND, int, LONG);
+  #ifdef _WIN64
+	MPW_WINAPI LONG_PTR __stdcall GetWindowLongPtrA(HWND, int);
+	MPW_WINAPI LONG_PTR __stdcall SetWindowLongPtrA(HWND, int, LONG_PTR);
+  #else
+	static inline LONG_PTR __stdcall GetWindowLongPtrA(HWND hwnd, int gwl) { return (LONG_PTR)GetWindowLongA(hwnd, gwl); }
+	static inline LONG_PTR __stdcall SetWindowLongPtrA(HWND hwnd, int gwl, LONG_PTR lp) { return (LONG_PTR)SetWindowLongA(hwnd, gwl, LONG(lp)); }
+  #endif
+	MPW_WINAPI BOOL     __stdcall SwapBuffers(HDC);
+	MPW_WINAPI BOOL     __stdcall GetMessageA(MSG *, HWND, UINT, UINT);
+	MPW_WINAPI BOOL     __stdcall PeekMessageA(MSG *, HWND, UINT, UINT, UINT);
+	MPW_WINAPI BOOL     __stdcall TranslateMessage(MSG const *);
+	MPW_WINAPI LRESULT  __stdcall DispatchMessageA(MSG const *);
+	MPW_WINAPI HCURSOR  __stdcall LoadCursorA(HINSTANCE, LPCSTR);
+	MPW_WINAPI HICON    __stdcall LoadIconA(HINSTANCE, LPCSTR);
+	MPW_WINAPI BOOL     __stdcall ShowWindow(HWND, int);
+	MPW_WINAPI BOOL     __stdcall SetWindowPos(HWND, HWND, int, int, int, int, UINT);
+	MPW_WINAPI BOOL     __stdcall AdjustWindowRectEx(RECT *, DWORD, BOOL, DWORD);
+
+} // namespace _win
+
 #else
+
+namespace _glx {
 
 	static constexpr int GLX_USE_GL_            = 1;
 	static constexpr int GLX_BUFFER_SIZE_       = 2;
@@ -74,10 +480,9 @@ namespace _glx {
 	extern "C" void          glXWaitX();
 	extern "C" void          glXUseXFont(Font font, int first, int count, int list);
 
-#endif
-
 } // namespace _glx
 
+#endif
 
 struct create_window_failure : public ds::exception
 {
@@ -85,6 +490,15 @@ struct create_window_failure : public ds::exception
 	what() const noexcept override
 	{
 		return "create window failure";
+	}
+};
+
+struct create_context_failure : public ds::exception
+{
+	char const *
+	what() const noexcept override
+	{
+		return "create context failure";
 	}
 };
 
@@ -100,22 +514,88 @@ struct invalid_window : public ds::exception
 
 class Window
 {
-	Display    * _display = nullptr;
+	Display    * _display    = nullptr;
 	ds::string<> _title;
-	int          _x      = 0;
-	int          _y      = 0;
-	int          _width  = 0;
-	int          _height = 0;
+	int          _x          = 0;
+	int          _y          = 0;
+	int          _width      = 0;
+	int          _height     = 0;
+	bool         _destroying = false;
   #ifdef _WIN32
+	using LRESULT   = _win::LRESULT;
+	using HINSTANCE = _win::HINSTANCE;
+	using HWND      = _win::HWND;
+	using HDC       = _win::HDC;
+	using HGLRC     = _win::HGLRC;
+	using UINT      = _win::UINT;
+	using WPARAM    = _win::WPARAM;
+	using LPARAM    = _win::LPARAM;
+	using DWORD     = _win::DWORD;
+	static constexpr HINSTANCE _null_winhinst  = NULL;
+	static constexpr HWND      _null_winwindow = NULL;
+	static constexpr HDC       _null_windevctx = NULL;
+	static constexpr HGLRC     _null_winglctx  = NULL;
+	HINSTANCE _winhinst  = _null_winhinst;
+	HWND      _winwindow = _null_winwindow;
+	HDC       _windevctx = _null_windevctx;
+	HGLRC     _winglctx  = _null_winglctx;
+	DWORD     _style     = 0;
   #else
-	static constexpr ::Window _invalid_xwindow = {};
-	::Window           _xwindow    = _invalid_xwindow;
+	static constexpr ::Window _null_xwindow = {};
+	::Window           _xwindow    = _null_xwindow;
 	_glx::GLXContext   _xcontext   = nullptr;
-	bool               _destroying = false;
 	bool               _raised     = false;
   #endif
 
-#ifndef _WIN32
+#ifdef _WIN32
+	static LRESULT __stdcall 
+	_win_proc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
+	{
+		using namespace mw::_win;
+		auto * window = reinterpret_cast<Window *>(GetWindowLongPtrA(hwnd, GWLP_USERDATA_));
+		if(window != nullptr)
+		{
+			switch(umsg)
+			{
+				case WM_DESTROY_:
+				{
+					if(!window->_destroying)
+						window->destroy();
+					return 0;
+				}
+				case WM_SIZE_:
+				{
+					switch(wparam) 
+					{
+						case SIZE_MAXHIDE_:
+						case SIZE_MINIMIZED_: 
+							break;
+						case SIZE_MAXIMIZED_:
+						case SIZE_MAXSHOW_:
+						case SIZE_RESTORED_:
+						default:
+						{
+							size_t width  = _loword(lparam);
+							size_t height = _hiword(lparam);
+							window->_on_size(width, height);
+							return 0;
+						}
+					}
+					break;
+				}
+				case WM_MOVE_:
+				{
+					size_t x_ = _loword(lparam);
+					size_t y_ = _hiword(lparam);
+					window->_on_move(x_, y_);
+					return 0;
+				}
+			}
+		}
+		return DefWindowProcA(hwnd, umsg, wparam, lparam);
+	};
+
+#else
 	static ds::unordered_map<32,::Window,Window *> _map;
 	
 	bool
@@ -187,7 +667,62 @@ class Window
 		: _display { &display_ }
 		, _title   { ds::move(title_) }
   #ifdef _WIN32
-	{}
+	{
+		constexpr char const * CLASS_NAME = "MPW_WINDOW";
+		using namespace mw::_win;
+		auto hinst = (HINSTANCE)GetModuleHandleA(nullptr);
+		_winhinst  = hinst;
+		assert(hinst != NULL);
+		static bool _registered = false;
+		if(!_registered)
+		{
+			WNDCLASSEXA wcex {};
+			wcex.cbSize        = sizeof(WNDCLASSEXA);
+			wcex.hInstance     = hinst;
+			wcex.style         = CS_OWNDC_;
+			wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW_);
+			wcex.hCursor       = LoadCursorA(NULL, reinterpret_cast<char const *>(IDC_ARROW_));
+			wcex.hIcon         = LoadIconA(NULL,   reinterpret_cast<char const *>(IDI_APPLICATION_));
+			wcex.lpfnWndProc   = _win_proc;
+			wcex.lpszClassName = CLASS_NAME;
+			auto res = RegisterClassExA(&wcex);
+			assert(res != NULL);
+			_registered = res != NULL;
+		}
+		_style = WS_OVERLAPPEDWINDOW_;
+		RECT rc { 0, 0, width_, height_ };
+		AdjustWindowRectEx(&rc, _style, 0, 0);
+		HWND hwnd = CreateWindowExA(0, CLASS_NAME, "main window"
+			, _style
+			, CW_USEDEFAULT_, CW_USEDEFAULT_, (rc.right - rc.left), (rc.bottom - rc.top)
+			, NULL, NULL, hinst, nullptr);
+		_winwindow = hwnd;
+		ds_throw_if(hwnd == _null_winwindow, create_window_failure());
+		ds_throw_if_alt(hwnd == _null_winwindow, assert(hwnd != _null_winwindow); return);
+		SetWindowLongPtrA(hwnd, GWLP_USERDATA_, LONG_PTR(this));
+		auto * window = reinterpret_cast<Window *>(GetWindowLongPtrA(hwnd, GWLP_USERDATA_));
+		ds_throw_if(window != this, create_window_failure());
+		ds_throw_if_alt(window != this, assert(window == this); return);
+		HDC hdc = GetDC(hwnd);
+		_windevctx = hdc;
+		{
+			PIXELFORMATDESCRIPTOR pfd {};
+			pfd.nSize        = sizeof(PIXELFORMATDESCRIPTOR);
+			pfd.nVersion     = 1;
+			pfd.iPixelType   = PFD_TYPE_RGBA_;
+			pfd.dwFlags      = PFD_DRAW_TO_WINDOW_ | PFD_SUPPORT_OPENGL_ | PFD_DOUBLEBUFFER_ | PFD_SWAP_EXCHANGE_;
+			pfd.iLayerType   = PFD_MAIN_PLANE_;
+			pfd.cColorBits   = 32;
+			pfd.cDepthBits   = 24;
+			pfd.cStencilBits = 8;
+			SetPixelFormat(hdc, ChoosePixelFormat(hdc, &pfd), &pfd);
+		}
+		HGLRC hglrc = wglCreateContext(hdc);
+		_winglctx   = hglrc;
+		ds_throw_if(_winglctx == _null_winglctx, create_context_failure());
+		ds_throw_if_alt(_winglctx == _null_winglctx, assert(_winglctx != _null_winglctx); return);
+		wglMakeCurrent(_windevctx, _winglctx);
+	}
   #else
 	{
 		ds_throw_if(display_._xdisplay == nullptr, invalid_display());
@@ -208,8 +743,8 @@ class Window
 			// swa_mask |= CWOverrideRedirect;
 			_xwindow   = XCreateWindow(xdisplay_, root_, 0, 0, width_, height_, 0, visual_->depth
 									, InputOutput, visual_->visual, swa_mask, &swa);
-			ds_throw_if(_xwindow == _invalid_xwindow, create_window_failure());
-			ds_throw_if_alt(_xwindow == _invalid_xwindow, assert(_xwindow != _invalid_xwindow); return);
+			ds_throw_if(_xwindow == _null_xwindow, create_window_failure());
+			ds_throw_if_alt(_xwindow == _null_xwindow, assert(_xwindow != _null_xwindow); return);
 			auto window_closed_ = XInternAtom(xdisplay_, "WM_DELETE_WINDOW", True);
 			XSetWMProtocols(xdisplay_, _xwindow, &window_closed_, 1);
 			XStoreName(xdisplay_, _xwindow, _title.begin());
@@ -217,7 +752,7 @@ class Window
 		}
 		{
 			_xcontext = glXCreateContext(xdisplay_, visual_, nullptr, 1);
-			ds_throw_if(_xcontext == nullptr, create_window_failure());
+			ds_throw_if(_xcontext == nullptr, create_context_failure());
 			ds_throw_if_alt(_xcontext == nullptr, assert(_xcontext != nullptr));
 			glXMakeCurrent(xdisplay_, _xwindow, _xcontext);
 		}
@@ -229,6 +764,23 @@ class Window
 	destroy() noexcept
 	{
 	  #ifdef _WIN32
+		if(_winwindow != _null_winwindow)
+		{
+			using namespace mw::_win;
+			_destroying = true;
+			if(_winglctx != _null_winglctx)
+			{
+				wglMakeCurrent(_null_windevctx, _null_winglctx);
+				wglDeleteContext(_winglctx);
+			}
+			if(_windevctx != _null_windevctx)
+			{
+				ReleaseDC(_winwindow, _windevctx);
+			}
+			DestroyWindow(_winwindow);
+			_destroying = false;
+			_winwindow = _null_winwindow;
+		}
 	  #else
 		auto display_valid_ = _display != nullptr && _display->_xdisplay != nullptr;
 		if(_xcontext != nullptr)
@@ -241,7 +793,7 @@ class Window
 			}
 			_xcontext = nullptr;
 		}
-	  	if(_xwindow != _invalid_xwindow)
+	  	if(_xwindow != _null_xwindow)
 		{
 			if(display_valid_)
 			{
@@ -250,7 +802,7 @@ class Window
 				_destroying = false;
 			}
 			_map.remove(_xwindow);
-			_xwindow = _invalid_xwindow;
+			_xwindow = _null_xwindow;
 		}
 	  #endif
 	}
@@ -259,11 +811,16 @@ class Window
 	show() noexcept(false)
 	{
 	  #ifdef _WIN32
+		ds_throw_if(_winwindow == _null_winwindow, invalid_window());
+		ds_throw_if_alt(_winwindow == _null_winwindow, assert(_winwindow != _null_winwindow); return false);
+		using namespace mw::_win;
+		ShowWindow(_winwindow, SW_NORMAL_);
+		return true;
 	  #else
 		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
 		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
-		ds_throw_if(_xwindow == _invalid_xwindow, invalid_window());
-		ds_throw_if_alt(_xwindow == _invalid_xwindow, assert(_xwindow != _invalid_xwindow); return false);
+		ds_throw_if(_xwindow == _null_xwindow, invalid_window());
+		ds_throw_if_alt(_xwindow == _null_xwindow, assert(_xwindow != _null_xwindow); return false);
 		if(XMapRaised(_display->_xdisplay, _xwindow) != False)
 		{
 			_raised = true;
@@ -277,11 +834,15 @@ class Window
 	swap()
 	{
 	  #ifdef _WIN32
+		ds_throw_if(_winwindow == _null_winwindow, invalid_window());
+		ds_throw_if_alt(_winwindow == _null_winwindow, assert(_winwindow != _null_winwindow); return);
+		using namespace mw::_win;
+		SwapBuffers(_windevctx);
 	  #else
 		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
 		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
-		ds_throw_if(_xwindow == _invalid_xwindow, invalid_window());
-		ds_throw_if_alt(_xwindow == _invalid_xwindow, assert(_xwindow != _invalid_xwindow); return false);
+		ds_throw_if(_xwindow == _null_xwindow, invalid_window());
+		ds_throw_if_alt(_xwindow == _null_xwindow, assert(_xwindow != _null_xwindow); return false);
 		using namespace mw::_glx;
 		if(_display != nullptr && _display->_xdisplay != nullptr)
 			glXSwapBuffers(_display->_xdisplay, _xwindow);
@@ -292,9 +853,16 @@ class Window
 	make_current() noexcept
 	{
 	  #ifdef _WIN32
+		using namespace mw::_win;
+		if(_winwindow != _null_winwindow && _winglctx != _null_winglctx)
+		{
+			if(wglGetCurrentContext() == _winglctx)
+				return true;
+			return wglMakeCurrent(_windevctx, _winglctx) != 0;
+		}
 	  #else
 		using namespace mw::_glx;
-		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _invalid_xwindow)
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
 		{
 			if(glXGetCurrentContext() == _xcontext)
 				return true;
@@ -309,8 +877,11 @@ class Window
 	set_position(int x_, int y_) noexcept
 	{
 	  #ifdef _WIN32
+		using namespace mw::_win;
+		if(_winwindow != _null_winwindow)
+			return SetWindowPos(_winwindow, _null_winwindow, x_, y_, 0, 0, SWP_NOSIZE_) != 0;
 	  #else
-		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _invalid_xwindow)
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
 			return XMoveWindow(_display->_xdisplay, _xwindow, x_, y_) == 0;
 	  #endif
 		return false;
@@ -320,8 +891,11 @@ class Window
 	set_size(int width_, int height_) noexcept
 	{
 	  #ifdef _WIN32
+		using namespace mw::_win;
+		if(_winwindow != _null_winwindow)
+			return SetWindowPos(_winwindow, _null_winwindow, 0, 0, width_, height_, SWP_NOMOVE_) != 0;
 	  #else
-		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _invalid_xwindow)
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
 			return XResizeWindow(_display->_xdisplay, _xwindow, width_, height_) == 0;
 	  #endif
 		return false;
@@ -331,10 +905,13 @@ class Window
 	int height() const noexcept { return _height; }
 
   #ifdef _WIN32
+	bool operator!() noexcept { return _winwindow == _null_winwindow; }
+	explicit operator bool()       noexcept { return _winwindow != _null_winwindow; }
+	explicit operator bool() const noexcept { return _winwindow != _null_winwindow; }
   #else
-	bool operator!() noexcept { return _xwindow == _invalid_xwindow; }
-	explicit operator bool()       noexcept { return _xwindow != _invalid_xwindow; }
-	explicit operator bool() const noexcept { return _xwindow != _invalid_xwindow; }
+	bool operator!() noexcept { return _xwindow == _null_xwindow; }
+	explicit operator bool()       noexcept { return _xwindow != _null_xwindow; }
+	explicit operator bool() const noexcept { return _xwindow != _null_xwindow; }
   #endif
 
 };
