@@ -108,11 +108,9 @@ class Window
 	int          _height = 0;
   #ifdef _WIN32
   #else
- public:
 	static constexpr ::Window _invalid_xwindow = {};
 	::Window           _xwindow    = _invalid_xwindow;
 	_glx::GLXContext   _xcontext   = nullptr;
- private:
 	bool               _destroying = false;
 	bool               _raised     = false;
   #endif
@@ -146,7 +144,7 @@ class Window
 				int height_ = xevent_.xconfigure.height;
 				if(width_ != _width || height_ != _height)
 					this->_on_size(width_, height_);
-				if(_raised && (x_ != _x || y_ != _y))
+				if(x_ != _x || y_ != _y)
 					this->_on_move(x_, y_);
 				break;
 			}
@@ -260,6 +258,8 @@ class Window
 	bool
 	show() noexcept(false)
 	{
+	  #ifdef _WIN32
+	  #else
 		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
 		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
 		ds_throw_if(_xwindow == _invalid_xwindow, invalid_window());
@@ -269,6 +269,7 @@ class Window
 			_raised = true;
 			return true;
 		}
+	  #endif
 		return false;
 	}
 

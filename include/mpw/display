@@ -26,7 +26,6 @@ struct open_display_failure : public ds::exception
 
 class Display
 {
- public:
   #ifdef _WIN32
   #else
   	::Display * _xdisplay;
@@ -47,14 +46,15 @@ class Display
 	}
 
 	Display(char const * display_id_ = nullptr) noexcept(false)
-	  #ifdef _WIN32
-	  #else
+  #ifdef _WIN32
+  	{}
+  #else
 		: _xdisplay { XOpenDisplay(display_id_) }
-	  #endif
 	{
 		ds_throw_if(_xdisplay == nullptr, open_display_failure());
 		ds_throw_alt(assert(_xdisplay != nullptr));
 	}
+  #endif
 
 	void
 	close() noexcept
