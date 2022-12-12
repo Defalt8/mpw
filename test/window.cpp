@@ -1,9 +1,6 @@
 #include <mpw/all>
 #include <ds/all>
 
-namespace win { using namespace mw::_win; }
-
-
 int main()
 {
 	ds_try {

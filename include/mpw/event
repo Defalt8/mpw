@@ -79,7 +79,7 @@ process_event(Event & event_) noexcept(false)
 	else
 	{
 		auto xwindow_ = event_._xevent.xany.window;
-		if(xwindow_ != Window::_invalid_xwindow)
+		if(xwindow_ != Window::_null_xwindow)
 		{
 			auto it = Window::_map.get(xwindow_);
 			if(it && it->value)
