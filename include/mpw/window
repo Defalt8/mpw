@@ -692,7 +692,7 @@ class Window
 		_style = WS_OVERLAPPEDWINDOW_;
 		RECT rc { 0, 0, width_, height_ };
 		AdjustWindowRectEx(&rc, _style, 0, 0);
-		HWND hwnd = CreateWindowExA(0, CLASS_NAME, "main window"
+		HWND hwnd = CreateWindowExA(0, CLASS_NAME, _title.begin()
 			, _style
 			, CW_USEDEFAULT_, CW_USEDEFAULT_, (rc.right - rc.left), (rc.bottom - rc.top)
 			, NULL, NULL, hinst, nullptr);
