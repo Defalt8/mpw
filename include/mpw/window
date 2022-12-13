@@ -331,6 +331,22 @@ namespace _win {
 	static constexpr  DWORD WM_VSCROLL_           = 0x0115;
 	static constexpr  DWORD WM_INITMENU_          = 0x0116;
 	static constexpr  DWORD WM_INITMENUPOPUP_     = 0x0117;
+	static constexpr  DWORD WM_MOUSEFIRST_        = 0x0200;
+	static constexpr  DWORD WM_MOUSEMOVE_         = 0x0200;
+	static constexpr  DWORD WM_LBUTTONDOWN_       = 0x0201;
+	static constexpr  DWORD WM_LBUTTONUP_         = 0x0202;
+	static constexpr  DWORD WM_LBUTTONDBLCLK_     = 0x0203;
+	static constexpr  DWORD WM_RBUTTONDOWN_       = 0x0204;
+	static constexpr  DWORD WM_RBUTTONUP_         = 0x0205;
+	static constexpr  DWORD WM_RBUTTONDBLCLK_     = 0x0206;
+	static constexpr  DWORD WM_MBUTTONDOWN_       = 0x0207;
+	static constexpr  DWORD WM_MBUTTONUP_         = 0x0208;
+	static constexpr  DWORD WM_MBUTTONDBLCLK_     = 0x0209;
+	static constexpr  DWORD WM_MOUSEHWHEEL_       = 0x020E;
+	static constexpr  DWORD WM_MOUSEWHEEL_        = 0x020A;
+	static constexpr  DWORD WM_XBUTTONDOWN_       = 0x020B;
+	static constexpr  DWORD WM_XBUTTONUP_         = 0x020C;
+	static constexpr  DWORD WM_XBUTTONDBLCLK_     = 0x020D;
 	static constexpr  WORD  IDC_ARROW_            = 32512;
 	static constexpr  WORD  IDC_IBEAM_            = 32513;
 	static constexpr  WORD  IDC_WAIT_             = 32514;
@@ -421,6 +437,7 @@ namespace _win {
 	MPW_WINAPI BOOL     __stdcall ShowWindow(HWND, int);
 	MPW_WINAPI BOOL     __stdcall SetWindowPos(HWND, HWND, int, int, int, int, UINT);
 	MPW_WINAPI BOOL     __stdcall AdjustWindowRectEx(RECT *, DWORD, BOOL, DWORD);
+	MPW_WINAPI BOOL     __stdcall ScreenToClient(HWND, POINT *);
 
 } // namespace _win
 
@@ -590,6 +607,68 @@ class Window
 					window->_on_move(x_, y_);
 					return 0;
 				}
+				case WM_LBUTTONDOWN_:
+				case WM_LBUTTONUP_:
+				case WM_NCLBUTTONUP_:
+				{
+					size_t x_    = _loword(lparam);
+					size_t y_    = _hiword(lparam);
+					bool   down_ = umsg == WM_LBUTTONDOWN_;
+					window->_on_mouse_button(x_, y_, mb_left, down_);
+					return 0;
+				}
+				case WM_RBUTTONDOWN_:
+				case WM_RBUTTONUP_:
+				case WM_NCRBUTTONUP_:
+				{
+					size_t x_    = _loword(lparam);
+					size_t y_    = _hiword(lparam);
+					bool   down_ = umsg == WM_RBUTTONDOWN_;
+					window->_on_mouse_button(x_, y_, mb_right, down_);
+					return 0;
+				}
+				case WM_MBUTTONDOWN_:
+				case WM_MBUTTONUP_:
+				case WM_NCMBUTTONUP_:
+				{
+					size_t x_    = _loword(lparam);
+					size_t y_    = _hiword(lparam);
+					bool   down_ = umsg == WM_MBUTTONDOWN_;
+					window->_on_mouse_button(x_, y_, mb_middle, down_);
+					return 0;
+				}
+				case WM_XBUTTONDOWN_:
+				case WM_XBUTTONUP_:
+				{
+					size_t x_    = _loword(lparam);
+					size_t y_    = _hiword(lparam);
+					bool   down_ = umsg == WM_XBUTTONDOWN_;
+					short  xn_   = _hiword(wparam);
+					switch(xn_)
+					{
+						case 1:  window->_on_mouse_button(x_, y_, mb_extra1, down_); break;
+						case 2:  window->_on_mouse_button(x_, y_, mb_extra2, down_); break;
+						default: window->_on_mouse_button(x_, y_, mb_other,  down_); break;
+					}
+					return 0;
+				}
+				case WM_MOUSEMOVE_:
+				{
+					size_t x_    = _loword(lparam);
+					size_t y_    = _hiword(lparam);
+					window->_on_mouse_move(x_, y_);
+					return 0;
+				}
+				case WM_MOUSEWHEEL_:
+				case WM_MOUSEHWHEEL_:
+				{
+					bool  vertical_ = umsg == WM_MOUSEWHEEL_;
+					short delta_    = _hiword(wparam);
+					POINT point_    = { _loword(lparam), _hiword(lparam) };
+					ScreenToClient(hwnd, &point_);
+					window->_on_mouse_wheel(point_.x, point_.y, delta_, vertical_);
+					return 0;
+				}
 			}
 		}
 		return DefWindowProcA(hwnd, umsg, wparam, lparam);
@@ -653,9 +732,33 @@ class Window
 			on_size(_width, _height);
 	}
 
+	void
+	_on_mouse_button(int x_, int y_, mouse_button button_, bool down_) noexcept
+	{
+		if(on_mouse_button)
+			on_mouse_button(x_, y_, button_, down_);
+	}
+
+	void
+	_on_mouse_move(int x_, int y_) noexcept
+	{
+		if(on_mouse_move)
+			on_mouse_move(x_, y_);
+	}
+
+	void
+	_on_mouse_wheel(int x_, int y_, int delta_, bool vertical_) noexcept
+	{
+		if(on_mouse_wheel)
+			on_mouse_wheel(x_, y_, delta_, vertical_);
+	}
+
  public:
 	ds::callable<void(int,int)> on_move;
 	ds::callable<void(int,int)> on_size;
+	ds::callable<void(int,int,mouse_button,bool)> on_mouse_button;
+	ds::callable<void(int,int)>                   on_mouse_move;
+	ds::callable<void(int,int,int,bool)>          on_mouse_wheel;
 
  public:
 	~Window() noexcept
