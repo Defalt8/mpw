@@ -1,10 +1,14 @@
 #include <mpw/all>
 #include <ds/all>
+#ifdef _WIN32
+#	define WIN32_LEAN_AND_MEAN
+#	include <Windows.h>
+#endif
+#include <GL/gl.h>
 
 int main()
 {
 	ds_try {
-		mw::init();
 		mw::display display; 
 		mw::event   event;
 		mw::window  window(display, "main window", 640, 480);
@@ -15,16 +19,15 @@ int main()
 		window.on_mouse_wheel  = [&](int x, int y, int delta, bool vertical) { mw::log << "mouse wheel " << x << " " << y << " " << delta << " " << vertical << mw::endl; };
 		window.on_key = [&](mw::key key, bool down) { mw::log << "key " << cstr_key(key) << " " << down << mw::endl; };
 		assert(window.show());
-		mw::log << (char const *)glfl::GL::get_string(glfl::GL::VERSION) << mw::endl;
+		mw::log << (char const *)glGetString(GL_VERSION) << mw::endl;
 		while(window)
 		{
 			mw::next_event(display, event, false) && mw::process_event(event);
 			if(window.make_current()) 
 			{
-				using namespace glfl::GL;
 				float v = fmodf(float(clock()) / float(CLOCKS_PER_SEC), 1.f);
-				clear_color(v, .2f, .3f, 0.f);
-				clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+				glClearColor(v, .2f, .3f, 0.f);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				window.swap();
 			}
 		}

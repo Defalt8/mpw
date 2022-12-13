@@ -13,11 +13,10 @@ set( MPW_HEADER_FILES
 )
 
 add_subdirectory( dep/dspp dep_dspp )
-add_subdirectory( dep/glfl dep_glfl )
 
 add_library( mpw INTERFACE )
 target_include_directories( mpw INTERFACE include dep/dspp/include dep/glfl/include )
-target_link_libraries( mpw INTERFACE dspp glfl )
+target_link_libraries( mpw INTERFACE dspp )
 if( WIN32 )
 	target_link_libraries( mpw INTERFACE user32 opengl32 )
 else()
