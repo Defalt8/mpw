@@ -6,6 +6,30 @@
 
 namespace mw {
 
+enum mouse_button
+{
+	mb_other,
+	mb_left,
+	mb_right,
+	mb_middle,
+	mb_extra1,
+	mb_extra2,
+};
+
+static constexpr char const *
+cstr_mouse_button(mouse_button btn)
+{
+	switch(btn)
+	{
+		default:        return "other";
+		case mb_left:   return "left";
+		case mb_right:  return "right";
+		case mb_middle: return "middle";
+		case mb_extra1: return "extra1";
+		case mb_extra2: return "extra2";
+	}
+}
+
 } // namespace mw
 
 
