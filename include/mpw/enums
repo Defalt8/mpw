@@ -30,6 +30,354 @@ cstr_mouse_button(mouse_button btn)
 	}
 }
 
+enum key
+{
+	key_other,
+	key_cancel,
+	key_backspace,
+	key_tab,
+	key_clear,
+	key_enter,
+	key_lshift,
+	key_rshift,
+	key_lcontrol,
+	key_rcontrol,
+	key_lalt,
+	key_ralt,
+	key_menu,
+	key_lcommand,
+	key_rcommand,
+	key_pause,
+	key_num_lock,
+	key_caps_lock,
+	key_scroll_lock,
+	key_escape,
+	key_space,
+	key_page_up,
+	key_page_down,
+	key_end,
+	key_home,
+	key_left,
+	key_right,
+	key_up,
+	key_down,
+	key_select,
+	key_exec,
+	key_print,
+	key_insert,
+	key_delete,
+	key_help,
+	key_f1,
+	key_f2,
+	key_f3,
+	key_f4,
+	key_f5,
+	key_f6,
+	key_f7,
+	key_f8,
+	key_f9,
+	key_f10,
+	key_f11,
+	key_f12,
+	key_1,
+	key_2,
+	key_3,
+	key_4,
+	key_5,
+	key_6,
+	key_7,
+	key_8,
+	key_9,
+	key_0,
+	key_back_tick,
+	key_tilde,
+	key_exclamation,
+	key_at,
+	key_numbersign,
+	key_dollarsign,
+	key_percent,
+	key_circumflex,
+	key_ampersand,
+	key_asterisk,
+	key_lparenthesis,
+	key_rparenthesis,
+	key_minus,
+	key_underscore,
+	key_equal,
+	key_plus,
+	key_lbracket,
+	key_lbrace,
+	key_rbracket,
+	key_rbrace,
+	key_back_slash,
+	key_bar,
+	key_semicolon,
+	key_colon,
+	key_quote,
+	key_double_quote,
+	key_comma,
+	key_less,
+	key_period,
+	key_greater,
+	key_slash,
+	key_question,
+	key_a,
+	key_b,
+	key_c,
+	key_d,
+	key_e,
+	key_f,
+	key_g,
+	key_h,
+	key_i,
+	key_j,
+	key_k,
+	key_l,
+	key_m,
+	key_n,
+	key_o,
+	key_p,
+	key_q,
+	key_r,
+	key_s,
+	key_t,
+	key_u,
+	key_v,
+	key_w,
+	key_x,
+	key_y,
+	key_z,
+	key_A,
+	key_B,
+	key_C,
+	key_D,
+	key_E,
+	key_F,
+	key_G,
+	key_H,
+	key_I,
+	key_J,
+	key_K,
+	key_L,
+	key_M,
+	key_N,
+	key_O,
+	key_P,
+	key_Q,
+	key_R,
+	key_S,
+	key_T,
+	key_U,
+	key_V,
+	key_W,
+	key_X,
+	key_Y,
+	key_Z,
+	key_num_0,
+	key_num_1,
+	key_num_2,
+	key_num_3,
+	key_num_4,
+	key_num_5,
+	key_num_6,
+	key_num_7,
+	key_num_8,
+	key_num_9,
+	key_num_divide,
+	key_num_multiply,
+	key_num_subtract,
+	key_num_add,
+	key_num_enter,
+	key_num_delete,
+	key_num_decimal,
+	key_num_insert,
+	key_num_home,
+	key_num_end,
+	key_num_page_up,
+	key_num_page_down,
+	key_num_left,
+	key_num_right,
+	key_num_up,
+	key_num_down,
+};
+
+
+static constexpr char const *
+cstr_key(key key_)
+{
+	switch(key_)
+	{
+		default:                      return "Other";
+		case key_cancel:              return "Cancel";
+		case key_backspace:           return "Backspace";
+		case key_tab:                 return "Tab";
+		case key_clear:               return "Clear";
+		case key_enter:               return "Enter";
+		case key_lshift:              return "Left_Shift";
+		case key_rshift:              return "Right_Shift";
+		case key_lcontrol:            return "Left_Control";
+		case key_rcontrol:            return "Right_Control";
+		case key_lalt:                return "Left_Alt";
+		case key_ralt:                return "Right_Alt";
+		case key_menu:                return "Menu";
+		case key_lcommand:            return "Left_Command";
+		case key_rcommand:            return "Right_Command";
+		case key_pause:               return "Pause";
+		case key_num_lock:            return "Num_Lock";
+		case key_caps_lock:           return "Caps_Lock";
+		case key_scroll_lock:         return "Scroll_Lock";
+		case key_escape:              return "Escape";
+		case key_space:               return "Space";
+		case key_page_up:             return "Page_Up";
+		case key_page_down:           return "Page_Down";
+		case key_end:                 return "End";
+		case key_home:                return "Home";
+		case key_left:                return "Left";
+		case key_right:               return "Right";
+		case key_up:                  return "Up";
+		case key_down:                return "Down";
+		case key_select:              return "Select";
+		case key_exec:                return "Exec";
+		case key_print:               return "Print";
+		case key_insert:              return "Insert";
+		case key_delete:              return "Delete";
+		case key_help:                return "Help";
+		case key_f1:                  return "F1";
+		case key_f2:                  return "F2";
+		case key_f3:                  return "F3";
+		case key_f4:                  return "F4";
+		case key_f5:                  return "F5";
+		case key_f6:                  return "F6";
+		case key_f7:                  return "F7";
+		case key_f8:                  return "F8";
+		case key_f9:                  return "F9";
+		case key_f10:                 return "F10";
+		case key_f11:                 return "F11";
+		case key_f12:                 return "F12";
+		case key_1:                   return "1";
+		case key_2:                   return "2";
+		case key_3:                   return "3";
+		case key_4:                   return "4";
+		case key_5:                   return "5";
+		case key_6:                   return "6";
+		case key_7:                   return "7";
+		case key_8:                   return "8";
+		case key_9:                   return "9";
+		case key_0:                   return "0";
+		case key_back_tick:           return "Back_Tick";
+		case key_tilde:               return "Tilde";
+		case key_exclamation:         return "Exclamation";
+		case key_at:                  return "At";
+		case key_numbersign:          return "Number_Sign";
+		case key_dollarsign:          return "Dollar_Sign";
+		case key_percent:             return "Percent";
+		case key_circumflex:          return "Circumflex";
+		case key_ampersand:           return "Ampersand";
+		case key_asterisk:            return "Asterisk";
+		case key_lparenthesis:        return "Left_Parenthesis";
+		case key_rparenthesis:        return "Right_Parenthesis";
+		case key_minus:               return "Minus";
+		case key_underscore:          return "Underscore";
+		case key_equal:               return "Equal";
+		case key_plus:                return "Plus";
+		case key_lbracket:            return "Left_Bracket";
+		case key_lbrace:              return "Left_Brace";
+		case key_rbracket:            return "Right_Bracket";
+		case key_rbrace:              return "Right_Brace";
+		case key_back_slash:          return "Back_Slash";
+		case key_bar:                 return "Bar";
+		case key_semicolon:           return "Semicolon";
+		case key_colon:               return "Colon";
+		case key_quote:               return "Quote";
+		case key_double_quote:        return "Double_Quote";
+		case key_comma:               return "Comma";
+		case key_less:                return "Less";
+		case key_period:              return "Period";
+		case key_greater:             return "Greater";
+		case key_slash:               return "Slash";
+		case key_question:            return "Question";
+		case key_a:                   return "a";
+		case key_b:                   return "b";
+		case key_c:                   return "c";
+		case key_d:                   return "d";
+		case key_e:                   return "e";
+		case key_f:                   return "f";
+		case key_g:                   return "g";
+		case key_h:                   return "h";
+		case key_i:                   return "i";
+		case key_j:                   return "j";
+		case key_k:                   return "k";
+		case key_l:                   return "l";
+		case key_m:                   return "m";
+		case key_n:                   return "n";
+		case key_o:                   return "o";
+		case key_p:                   return "p";
+		case key_q:                   return "q";
+		case key_r:                   return "r";
+		case key_s:                   return "s";
+		case key_t:                   return "t";
+		case key_u:                   return "u";
+		case key_v:                   return "v";
+		case key_w:                   return "w";
+		case key_x:                   return "x";
+		case key_y:                   return "y";
+		case key_z:                   return "z";
+		case key_A:                   return "A";
+		case key_B:                   return "B";
+		case key_C:                   return "C";
+		case key_D:                   return "D";
+		case key_E:                   return "E";
+		case key_F:                   return "F";
+		case key_G:                   return "G";
+		case key_H:                   return "H";
+		case key_I:                   return "I";
+		case key_J:                   return "J";
+		case key_K:                   return "K";
+		case key_L:                   return "L";
+		case key_M:                   return "M";
+		case key_N:                   return "N";
+		case key_O:                   return "O";
+		case key_P:                   return "P";
+		case key_Q:                   return "Q";
+		case key_R:                   return "R";
+		case key_S:                   return "S";
+		case key_T:                   return "T";
+		case key_U:                   return "U";
+		case key_V:                   return "V";
+		case key_W:                   return "W";
+		case key_X:                   return "X";
+		case key_Y:                   return "Y";
+		case key_Z:                   return "Z";
+		case key_num_0:               return "Num_0";
+		case key_num_1:               return "Num_1";
+		case key_num_2:               return "Num_2";
+		case key_num_3:               return "Num_3";
+		case key_num_4:               return "Num_4";
+		case key_num_5:               return "Num_5";
+		case key_num_6:               return "Num_6";
+		case key_num_7:               return "Num_7";
+		case key_num_8:               return "Num_8";
+		case key_num_9:               return "Num_9";
+		case key_num_divide:          return "Num_Divide";
+		case key_num_multiply:        return "Num_Multiply";
+		case key_num_subtract:        return "Num_Subtract";
+		case key_num_add:             return "Num_Add";
+		case key_num_enter:           return "Num_Enter";
+		case key_num_delete:          return "Num_Delete";
+		case key_num_decimal:         return "Num_Decimal";
+		case key_num_insert:          return "Num_Insert";
+		case key_num_home:            return "Num_Home";
+		case key_num_end:             return "Num_End";
+		case key_num_page_up:         return "Num_Page_Up";
+		case key_num_page_down:       return "Num_Page_Down";
+		case key_num_left:            return "Num_Left";
+		case key_num_right:           return "Num_Right";
+		case key_num_up:              return "Num_Up";
+		case key_num_down:            return "Num_Down";
+	}
+}
+
+
 } // namespace mw
 
 
