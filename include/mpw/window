@@ -393,6 +393,88 @@ namespace _win {
 	static constexpr  int   SW_FORCEMINIMIZE_     = 11;
 	static constexpr  int   SW_MAX_               = 11;
 
+	static constexpr  DWORD VK_CANCEL_            = 0x03;
+	static constexpr  DWORD VK_BACK_              = 0x08;
+	static constexpr  DWORD VK_TAB_               = 0x09;
+	static constexpr  DWORD VK_CLEAR_             = 0x0C;
+	static constexpr  DWORD VK_RETURN_            = 0x0D;
+	static constexpr  DWORD VK_SHIFT_             = 0x10;
+	static constexpr  DWORD VK_CONTROL_           = 0x11;
+	static constexpr  DWORD VK_MENU_              = 0x12;
+	static constexpr  DWORD VK_PAUSE_             = 0x13;
+	static constexpr  DWORD VK_CAPITAL_           = 0x14;
+	static constexpr  DWORD VK_ESCAPE_            = 0x1B;
+	static constexpr  DWORD VK_SPACE_             = 0x20;
+	static constexpr  DWORD VK_PRIOR_             = 0x21;
+	static constexpr  DWORD VK_NEXT_              = 0x22;
+	static constexpr  DWORD VK_END_               = 0x23;
+	static constexpr  DWORD VK_HOME_              = 0x24;
+	static constexpr  DWORD VK_LEFT_              = 0x25;
+	static constexpr  DWORD VK_UP_                = 0x26;
+	static constexpr  DWORD VK_RIGHT_             = 0x27;
+	static constexpr  DWORD VK_DOWN_              = 0x28;
+	static constexpr  DWORD VK_SELECT_            = 0x29;
+	static constexpr  DWORD VK_EXECUTE_           = 0x2B;
+	static constexpr  DWORD VK_SNAPSHOT_          = 0x2C;
+	static constexpr  DWORD VK_INSERT_            = 0x2D;
+	static constexpr  DWORD VK_DELETE_            = 0x2E;
+	static constexpr  DWORD VK_HELP_              = 0x2F;
+	static constexpr  DWORD VK_LWIN_              = 0x5B;
+	static constexpr  DWORD VK_RWIN_              = 0x5C;
+	static constexpr  DWORD VK_APPS_              = 0x5D;
+	static constexpr  DWORD VK_NUMPAD0_           = 0x60;
+	static constexpr  DWORD VK_NUMPAD1_           = 0x61;
+	static constexpr  DWORD VK_NUMPAD2_           = 0x62;
+	static constexpr  DWORD VK_NUMPAD3_           = 0x63;
+	static constexpr  DWORD VK_NUMPAD4_           = 0x64;
+	static constexpr  DWORD VK_NUMPAD5_           = 0x65;
+	static constexpr  DWORD VK_NUMPAD6_           = 0x66;
+	static constexpr  DWORD VK_NUMPAD7_           = 0x67;
+	static constexpr  DWORD VK_NUMPAD8_           = 0x68;
+	static constexpr  DWORD VK_NUMPAD9_           = 0x69;
+	static constexpr  DWORD VK_MULTIPLY_          = 0x6A;
+	static constexpr  DWORD VK_ADD_               = 0x6B;
+	static constexpr  DWORD VK_SEPARATOR_         = 0x6C;
+	static constexpr  DWORD VK_SUBTRACT_          = 0x6D;
+	static constexpr  DWORD VK_DECIMAL_           = 0x6E;
+	static constexpr  DWORD VK_DIVIDE_            = 0x6F;
+	static constexpr  DWORD VK_F1_                = 0x70;
+	static constexpr  DWORD VK_F2_                = 0x71;
+	static constexpr  DWORD VK_F3_                = 0x72;
+	static constexpr  DWORD VK_F4_                = 0x73;
+	static constexpr  DWORD VK_F5_                = 0x74;
+	static constexpr  DWORD VK_F6_                = 0x75;
+	static constexpr  DWORD VK_F7_                = 0x76;
+	static constexpr  DWORD VK_F8_                = 0x77;
+	static constexpr  DWORD VK_F9_                = 0x78;
+	static constexpr  DWORD VK_F10_               = 0x79;
+	static constexpr  DWORD VK_F11_               = 0x7A;
+	static constexpr  DWORD VK_F12_               = 0x7B;
+	static constexpr  DWORD VK_F13_               = 0x7C;
+	static constexpr  DWORD VK_F14_               = 0x7D;
+	static constexpr  DWORD VK_F15_               = 0x7E;
+	static constexpr  DWORD VK_F16_               = 0x7F;
+	static constexpr  DWORD VK_F17_               = 0x80;
+	static constexpr  DWORD VK_F18_               = 0x81;
+	static constexpr  DWORD VK_F19_               = 0x82;
+	static constexpr  DWORD VK_F20_               = 0x83;
+	static constexpr  DWORD VK_F21_               = 0x84;
+	static constexpr  DWORD VK_F22_               = 0x85;
+	static constexpr  DWORD VK_F23_               = 0x86;
+	static constexpr  DWORD VK_F24_               = 0x87;
+	static constexpr  DWORD VK_NUMLOCK_           = 0x90;
+	static constexpr  DWORD VK_SCROLL_            = 0x91;
+	static constexpr  DWORD VK_LSHIFT_            = 0xA0;
+	static constexpr  DWORD VK_RSHIFT_            = 0xA1;
+	static constexpr  DWORD VK_LCONTROL_          = 0xA2;
+	static constexpr  DWORD VK_RCONTROL_          = 0xA3;
+	static constexpr  DWORD VK_LMENU_             = 0xA4;
+	static constexpr  DWORD VK_RMENU_             = 0xA5;
+	static constexpr  UINT  MAPVK_VK_TO_VSC_      = 0;
+	static constexpr  UINT  MAPVK_VSC_TO_VK_      = 1;
+	static constexpr  UINT  MAPVK_VK_TO_CHAR_     = 2;
+	static constexpr  UINT  MAPVK_VSC_TO_VK_EX_   = 3;
+
 	static inline WORD _loword(DWORD dw) noexcept { return (dw & 0x0000FFFF); }
 	static inline WORD _hiword(DWORD dw) noexcept { return (dw & 0xFFFF0000) >> 16; }
 
@@ -438,8 +520,143 @@ namespace _win {
 	MPW_WINAPI BOOL     __stdcall SetWindowPos(HWND, HWND, int, int, int, int, UINT);
 	MPW_WINAPI BOOL     __stdcall AdjustWindowRectEx(RECT *, DWORD, BOOL, DWORD);
 	MPW_WINAPI BOOL     __stdcall ScreenToClient(HWND, POINT *);
+	MPW_WINAPI UINT     __stdcall MapVirtualKeyA(UINT, UINT);
+	MPW_WINAPI SHORT    __stdcall GetKeyState(int);
+	MPW_WINAPI SHORT    __stdcall GetAsyncKeyState(int);
 
 } // namespace _win
+
+namespace _ {
+
+using DWORD = mw::_win::DWORD;
+
+static key
+_map_key(DWORD key_code_, DWORD scancode_ = 0)
+{
+	using namespace mw::_win;
+	switch(key_code_)
+	{
+		case VK_CANCEL_:        return key_cancel;
+		case VK_BACK_:          return key_backspace;
+		case VK_TAB_:           return key_tab;
+		case VK_CLEAR_:         return key_clear;
+		case VK_RETURN_:        return (scancode_ & 0x01000000) ? key_num_enter : key_enter;
+		case VK_LSHIFT_:        return key_lshift;
+		case VK_RSHIFT_:        return key_rshift;
+		case VK_LCONTROL_:      return key_lcontrol;
+		case VK_RCONTROL_:      return key_rcontrol;
+		case VK_LMENU_:         return key_lalt;
+		case VK_RMENU_:         return key_ralt;
+		case VK_APPS_:          return key_menu;
+		case VK_LWIN_:          return key_lcommand;
+		case VK_RWIN_:          return key_rcommand;
+		case VK_PAUSE_:         return key_pause;
+		case VK_NUMLOCK_:       return key_num_lock;
+		case VK_CAPITAL_:       return key_caps_lock;
+		case VK_SCROLL_:        return key_scroll_lock;
+		case VK_ESCAPE_:        return key_escape;
+		case VK_SPACE_:         return key_space;
+		case VK_PRIOR_:         return (scancode_ & 0x01000000) ? key_page_up : key_num_page_up;
+		case VK_NEXT_:          return (scancode_ & 0x01000000) ? key_page_down : key_num_page_down;
+		case VK_END_:           return (scancode_ & 0x01000000) ? key_end : key_num_end;
+		case VK_HOME_:          return (scancode_ & 0x01000000) ? key_home : key_num_home;
+		case VK_LEFT_:          return (scancode_ & 0x01000000) ? key_left : key_num_left;
+		case VK_RIGHT_:         return (scancode_ & 0x01000000) ? key_right : key_num_right;
+		case VK_UP_:            return (scancode_ & 0x01000000) ? key_up : key_num_up;
+		case VK_DOWN_:          return (scancode_ & 0x01000000) ? key_down : key_num_down;
+		case VK_SELECT_:        return key_select;
+		case VK_EXECUTE_:       return key_execute;
+		case VK_SNAPSHOT_:      return key_print;
+		case VK_INSERT_:        return (scancode_ & 0x01000000) ? key_insert : key_num_insert;
+		case VK_DELETE_:        return (scancode_ & 0x01000000) ? key_delete : key_num_delete;
+		case VK_HELP_:          return key_help;
+		case VK_F1_:            return key_f1;
+		case VK_F2_:            return key_f2;
+		case VK_F3_:            return key_f3;
+		case VK_F4_:            return key_f4;
+		case VK_F5_:            return key_f5;
+		case VK_F6_:            return key_f6;
+		case VK_F7_:            return key_f7;
+		case VK_F8_:            return key_f8;
+		case VK_F9_:            return key_f9;
+		case VK_F10_:           return key_f10;
+		case VK_F11_:           return key_f11;
+		case VK_F12_:           return key_f12;
+		case VK_NUMPAD0_:       return key_num_0;
+		case VK_NUMPAD1_:       return key_num_1;
+		case VK_NUMPAD2_:       return key_num_2;
+		case VK_NUMPAD3_:       return key_num_3;
+		case VK_NUMPAD4_:       return key_num_4;
+		case VK_NUMPAD5_:       return key_num_5;
+		case VK_NUMPAD6_:       return key_num_6;
+		case VK_NUMPAD7_:       return key_num_7;
+		case VK_NUMPAD8_:       return key_num_8;
+		case VK_NUMPAD9_:       return key_num_9;
+		case VK_DIVIDE_:        return key_num_divide;
+		case VK_MULTIPLY_:      return key_num_multiply;
+		case VK_SUBTRACT_:      return key_num_subtract;
+		case VK_ADD_:           return key_num_add;
+		case VK_DECIMAL_:       return key_num_decimal;
+		default:
+		{
+			UINT char_code   = MapVirtualKeyA(key_code_, MAPVK_VK_TO_CHAR_);
+			bool shift_down_ = GetKeyState(VK_SHIFT_) & 0x10000000;
+			switch(char_code)
+			{
+				case '`':  return shift_down_ ? key_tilde : key_back_tick;
+				case '1':  return shift_down_ ? key_exclamation : key_minus;
+				case '2':  return shift_down_ ? key_at : key_equal;
+				case '3':  return shift_down_ ? key_numbersign : key_lbracket;
+				case '4':  return shift_down_ ? key_dollarsign : key_rbracket;
+				case '5':  return shift_down_ ? key_percent : key_back_slash;
+				case '6':  return shift_down_ ? key_circumflex : key_semicolon;
+				case '7':  return shift_down_ ? key_ampersand : key_quote;
+				case '8':  return shift_down_ ? key_asterisk : key_comma;
+				case '9':  return shift_down_ ? key_lparenthesis : key_period;
+				case '0':  return shift_down_ ? key_rparenthesis : key_slash;
+				case '-':  return shift_down_ ? key_underscore : key_1;
+				case '=':  return shift_down_ ? key_plus : key_2;
+				case '[':  return shift_down_ ? key_lbrace : key_3;
+				case ']':  return shift_down_ ? key_rbrace : key_4;
+				case '\\': return shift_down_ ? key_bar : key_5;
+				case ';':  return shift_down_ ? key_colon : key_6;
+				case '\'': return shift_down_ ? key_double_quote : key_7;
+				case ',':  return shift_down_ ? key_less : key_8;
+				case '.':  return shift_down_ ? key_greater : key_9;
+				case '/':  return shift_down_ ? key_question : key_0;
+				case 'A':  return shift_down_ ? key_A : key_a;
+				case 'B':  return shift_down_ ? key_B : key_b;
+				case 'C':  return shift_down_ ? key_C : key_c;
+				case 'D':  return shift_down_ ? key_D : key_d;
+				case 'E':  return shift_down_ ? key_E : key_e;
+				case 'F':  return shift_down_ ? key_F : key_f;
+				case 'G':  return shift_down_ ? key_G : key_g;
+				case 'H':  return shift_down_ ? key_H : key_h;
+				case 'I':  return shift_down_ ? key_I : key_i;
+				case 'J':  return shift_down_ ? key_J : key_j;
+				case 'K':  return shift_down_ ? key_K : key_k;
+				case 'L':  return shift_down_ ? key_L : key_l;
+				case 'M':  return shift_down_ ? key_M : key_m;
+				case 'N':  return shift_down_ ? key_N : key_n;
+				case 'O':  return shift_down_ ? key_O : key_o;
+				case 'P':  return shift_down_ ? key_P : key_p;
+				case 'Q':  return shift_down_ ? key_Q : key_q;
+				case 'R':  return shift_down_ ? key_R : key_r;
+				case 'S':  return shift_down_ ? key_S : key_s;
+				case 'T':  return shift_down_ ? key_T : key_t;
+				case 'U':  return shift_down_ ? key_U : key_u;
+				case 'V':  return shift_down_ ? key_V : key_v;
+				case 'W':  return shift_down_ ? key_W : key_w;
+				case 'X':  return shift_down_ ? key_X : key_x;
+				case 'Y':  return shift_down_ ? key_Y : key_y;
+				case 'Z':  return shift_down_ ? key_Z : key_z;
+			}
+			return key_other;
+		}
+	}
+}
+
+} // namespace _
 
 #else
 
@@ -535,7 +752,7 @@ _map_key(KeySym key_sym_)
 		case XK_Up:            return key_up;
 		case XK_Down:          return key_down;
 		case XK_Select:        return key_select;
-		case XK_Execute:       return key_exec;
+		case XK_Execute:       return key_execute;
 		case XK_Print:         return key_print;
 		case XK_Insert:        return key_insert;
 		case XK_Delete:        return key_delete;
@@ -772,8 +989,8 @@ class Window
 						case SIZE_RESTORED_:
 						default:
 						{
-							size_t width  = _loword(lparam);
-							size_t height = _hiword(lparam);
+							int width  = _loword(DWORD(lparam));
+							int height = _hiword(DWORD(lparam));
 							window->_on_size(width, height);
 							return 0;
 						}
@@ -782,8 +999,8 @@ class Window
 				}
 				case WM_MOVE_:
 				{
-					size_t x_ = _loword(lparam);
-					size_t y_ = _hiword(lparam);
+					int    x_    = _loword(DWORD(lparam));
+					int    y_    = _hiword(DWORD(lparam));
 					window->_on_move(x_, y_);
 					return 0;
 				}
@@ -791,8 +1008,8 @@ class Window
 				case WM_LBUTTONUP_:
 				case WM_NCLBUTTONUP_:
 				{
-					size_t x_    = _loword(lparam);
-					size_t y_    = _hiword(lparam);
+					int    x_    = _loword(DWORD(lparam));
+					int    y_    = _hiword(DWORD(lparam));
 					bool   down_ = umsg == WM_LBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_left, down_);
 					return 0;
@@ -801,8 +1018,8 @@ class Window
 				case WM_RBUTTONUP_:
 				case WM_NCRBUTTONUP_:
 				{
-					size_t x_    = _loword(lparam);
-					size_t y_    = _hiword(lparam);
+					int    x_    = _loword(DWORD(lparam));
+					int    y_    = _hiword(DWORD(lparam));
 					bool   down_ = umsg == WM_RBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_right, down_);
 					return 0;
@@ -811,8 +1028,8 @@ class Window
 				case WM_MBUTTONUP_:
 				case WM_NCMBUTTONUP_:
 				{
-					size_t x_    = _loword(lparam);
-					size_t y_    = _hiword(lparam);
+					int    x_    = _loword(DWORD(lparam));
+					int    y_    = _hiword(DWORD(lparam));
 					bool   down_ = umsg == WM_MBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_middle, down_);
 					return 0;
@@ -820,10 +1037,10 @@ class Window
 				case WM_XBUTTONDOWN_:
 				case WM_XBUTTONUP_:
 				{
-					size_t x_    = _loword(lparam);
-					size_t y_    = _hiword(lparam);
+					int    x_    = _loword(DWORD(lparam));
+					int    y_    = _hiword(DWORD(lparam));
 					bool   down_ = umsg == WM_XBUTTONDOWN_;
-					short  xn_   = _hiword(wparam);
+					short  xn_   = _hiword(DWORD(wparam));
 					switch(xn_)
 					{
 						case 1:  window->_on_mouse_button(x_, y_, mb_extra1, down_); break;
@@ -834,8 +1051,8 @@ class Window
 				}
 				case WM_MOUSEMOVE_:
 				{
-					size_t x_    = _loword(lparam);
-					size_t y_    = _hiword(lparam);
+					int x_ = _loword(DWORD(lparam));
+					int y_ = _hiword(DWORD(lparam));
 					window->_on_mouse_move(x_, y_);
 					return 0;
 				}
@@ -843,11 +1060,54 @@ class Window
 				case WM_MOUSEHWHEEL_:
 				{
 					bool  vertical_ = umsg == WM_MOUSEWHEEL_;
-					short delta_    = _hiword(wparam);
-					POINT point_    = { _loword(lparam), _hiword(lparam) };
+					int   delta_    = _hiword(DWORD(wparam));
+					POINT point_    = { _loword(DWORD(lparam)), _hiword(DWORD(lparam)) };
 					ScreenToClient(hwnd, &point_);
 					window->_on_mouse_wheel(point_.x, point_.y, delta_, vertical_);
 					return 0;
+				}
+				case WM_KEYDOWN_:
+				case WM_KEYUP_:
+				{
+					UINT scancode_ = (lparam & 0x00ff0000) >> 16;
+					int  extended_ = (lparam & 0x01000000) != 0;
+					bool down_ = umsg == WM_KEYDOWN_;
+					key  key_  = key_other;
+					switch(wparam)
+					{
+						case VK_CONTROL_:
+							key_ = _::_map_key(DWORD(extended_ ? VK_RCONTROL_ : VK_LCONTROL_));
+							break;
+						case VK_SHIFT_:
+							key_ = _::_map_key(DWORD(MapVirtualKeyA(scancode_, MAPVK_VSC_TO_VK_EX_)));
+							break;
+						default:
+							key_ = _::_map_key(DWORD(wparam), DWORD(lparam));
+							break;
+					}
+					window->_on_key(key_, down_);
+					return 0;
+				}
+				case WM_SYSKEYDOWN_:
+				case WM_SYSKEYUP_:
+				{
+					int  extended_ = (lparam & 0x01000000) != 0;
+					bool down_ = umsg == WM_SYSKEYDOWN_;
+					key  key_  = key_other;
+					switch(wparam)
+					{
+						case VK_MENU_:
+							key_ = _::_map_key(DWORD(extended_ ? VK_RMENU_ : VK_LMENU_));
+							break;
+						case VK_LWIN_:
+						case VK_RWIN_:
+							key_ = _::_map_key(DWORD(wparam));
+							break;
+						default:
+							return DefWindowProcA(hwnd, umsg, wparam, lparam);
+					}
+					window->_on_key(key_, down_);
+					return DefWindowProcA(hwnd, umsg, wparam, lparam);
 				}
 			}
 		}
@@ -1034,7 +1294,7 @@ class Window
 			wcex.cbSize        = sizeof(WNDCLASSEXA);
 			wcex.hInstance     = hinst;
 			wcex.style         = CS_OWNDC_;
-			wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW_);
+			wcex.hbrBackground = (HBRUSH)(size_t(COLOR_WINDOW_));
 			wcex.hCursor       = LoadCursorA(NULL, reinterpret_cast<char const *>(IDC_ARROW_));
 			wcex.hIcon         = LoadIconA(NULL,   reinterpret_cast<char const *>(IDI_APPLICATION_));
 			wcex.lpfnWndProc   = _win_proc;

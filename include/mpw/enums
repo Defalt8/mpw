@@ -62,7 +62,7 @@ enum key
 	key_up,
 	key_down,
 	key_select,
-	key_exec,
+	key_execute,
 	key_print,
 	key_insert,
 	key_delete,
@@ -237,7 +237,7 @@ cstr_key(key key_)
 		case key_up:                  return "Up";
 		case key_down:                return "Down";
 		case key_select:              return "Select";
-		case key_exec:                return "Exec";
+		case key_execute:             return "Execute";
 		case key_print:               return "Print";
 		case key_insert:              return "Insert";
 		case key_delete:              return "Delete";
