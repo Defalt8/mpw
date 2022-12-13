@@ -707,6 +707,31 @@ class Window
 					this->_on_move(x_, y_);
 				break;
 			}
+			case ButtonPress:
+			case ButtonRelease:
+			{
+				int  x_  = xevent_.xbutton.x;
+				int  y_  = xevent_.xbutton.y;
+				switch(xevent_.xbutton.button)
+				{
+					case Button1: this->_on_mouse_button(x_, y_, mb_left,   xevent_.type == ButtonPress); break;
+					case Button2: this->_on_mouse_button(x_, y_, mb_middle, xevent_.type == ButtonPress); break;
+					case Button3: this->_on_mouse_button(x_, y_, mb_right,  xevent_.type == ButtonPress); break;
+					case Button4: this->_on_mouse_wheel(x_, y_,  120, true); break;
+					case Button5: this->_on_mouse_wheel(x_, y_, -120, true); break;
+					case Button5+1: this->_on_mouse_button(x_, y_, mb_extra1, xevent_.type == ButtonPress); break;
+					case Button5+2: this->_on_mouse_button(x_, y_, mb_extra2, xevent_.type == ButtonPress); break;
+					default:        this->_on_mouse_button(x_, y_, mb_other,  xevent_.type == ButtonPress); break;
+				}
+				break;
+			}
+			case MotionNotify:
+			{
+				int  x_  = xevent_.xmotion.x;
+				int  y_  = xevent_.xmotion.y;
+				this->_on_mouse_move(x_, y_);
+				break;
+			}
 		}
 	}
 
@@ -840,7 +865,8 @@ class Window
 			XSetWindowAttributes swa;
 			auto root_ = DefaultRootWindow(xdisplay_);
 			swa.colormap   = XCreateColormap(xdisplay_, root_, visual_->visual, AllocNone);
-			swa.event_mask = Expose | StructureNotifyMask | VisibilityChangeMask | ClientMessage;
+			swa.event_mask = Expose | StructureNotifyMask | VisibilityChangeMask | ClientMessage
+			               | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
 			// swa.override_redirect  = True;
 			unsigned long swa_mask = CWColormap | CWEventMask; 
 			// swa_mask |= CWOverrideRedirect;
