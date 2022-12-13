@@ -499,6 +499,186 @@ namespace _glx {
 
 } // namespace _glx
 
+namespace _ {
+
+static constexpr key
+_map_key(KeySym key_sym_)
+{
+	switch(key_sym_)
+	{
+		case XK_Cancel:        return key_cancel;
+		case XK_BackSpace:     return key_backspace;
+		case XK_Tab:           return key_tab;
+		case XK_Clear:         return key_clear;
+		case XK_Return:        return key_enter;
+		case XK_Shift_L:       return key_lshift;
+		case XK_Shift_R:       return key_rshift;
+		case XK_Control_L:     return key_lcontrol;
+		case XK_Control_R:     return key_rcontrol;
+		case XK_Alt_L:         return key_lalt;
+		case XK_Alt_R:         return key_ralt;
+		case XK_Menu:          return key_menu;
+		case XK_Super_L:       return key_lcommand;
+		case XK_Super_R:       return key_rcommand;
+		case XK_Pause:         return key_pause;
+		case XK_Num_Lock:      return key_num_lock;
+		case XK_Caps_Lock:     return key_caps_lock;
+		case XK_Scroll_Lock:   return key_scroll_lock;
+		case XK_Escape:        return key_escape;
+		case XK_space:         return key_space;
+		case XK_Prior:         return key_page_up;
+		case XK_Next:          return key_page_down;
+		case XK_End:           return key_end;
+		case XK_Home:          return key_home;
+		case XK_Left:          return key_left;
+		case XK_Right:         return key_right;
+		case XK_Up:            return key_up;
+		case XK_Down:          return key_down;
+		case XK_Select:        return key_select;
+		case XK_Execute:       return key_exec;
+		case XK_Print:         return key_print;
+		case XK_Insert:        return key_insert;
+		case XK_Delete:        return key_delete;
+		case XK_Help:          return key_help;
+		case XK_F1:            return key_f1;
+		case XK_F2:            return key_f2;
+		case XK_F3:            return key_f3;
+		case XK_F4:            return key_f4;
+		case XK_F5:            return key_f5;
+		case XK_F6:            return key_f6;
+		case XK_F7:            return key_f7;
+		case XK_F8:            return key_f8;
+		case XK_F9:            return key_f9;
+		case XK_F10:           return key_f10;
+		case XK_F11:           return key_f11;
+		case XK_F12:           return key_f12;
+		case XK_1:             return key_1;
+		case XK_2:             return key_2;
+		case XK_3:             return key_3;
+		case XK_4:             return key_4;
+		case XK_5:             return key_5;
+		case XK_6:             return key_6;
+		case XK_7:             return key_7;
+		case XK_8:             return key_8;
+		case XK_9:             return key_9;
+		case XK_0:             return key_0;
+		case XK_quoteleft:     return key_back_tick;
+		case XK_asciitilde:    return key_tilde;
+		case XK_exclam:        return key_exclamation;
+		case XK_at:            return key_at;
+		case XK_numbersign:    return key_numbersign;
+		case XK_dollar:        return key_dollarsign;
+		case XK_percent:       return key_percent;
+		case XK_asciicircum:   return key_circumflex;
+		case XK_ampersand:     return key_ampersand;
+		case XK_asterisk:      return key_asterisk;
+		case XK_parenleft:     return key_lparenthesis;
+		case XK_parenright:    return key_rparenthesis;
+		case XK_minus:         return key_minus;
+		case XK_underscore:    return key_underscore;
+		case XK_equal:         return key_equal;
+		case XK_plus:          return key_plus;
+		case XK_bracketleft:   return key_lbracket;
+		case XK_braceleft:     return key_lbrace;
+		case XK_bracketright:  return key_rbracket;
+		case XK_braceright:    return key_rbrace;
+		case XK_backslash:     return key_back_slash;
+		case XK_bar:           return key_bar;
+		case XK_semicolon:     return key_semicolon;
+		case XK_colon:         return key_colon;
+		case XK_quoteright:    return key_quote;
+		case XK_quotedbl:      return key_double_quote;
+		case XK_comma:         return key_comma;
+		case XK_less:          return key_less;
+		case XK_period:        return key_period;
+		case XK_greater:       return key_greater;
+		case XK_slash:         return key_slash;
+		case XK_question:      return key_question;
+		case XK_a:             return key_a;
+		case XK_b:             return key_b;
+		case XK_c:             return key_c;
+		case XK_d:             return key_d;
+		case XK_e:             return key_e;
+		case XK_f:             return key_f;
+		case XK_g:             return key_g;
+		case XK_h:             return key_h;
+		case XK_i:             return key_i;
+		case XK_j:             return key_j;
+		case XK_k:             return key_k;
+		case XK_l:             return key_l;
+		case XK_m:             return key_m;
+		case XK_n:             return key_n;
+		case XK_o:             return key_o;
+		case XK_p:             return key_p;
+		case XK_q:             return key_q;
+		case XK_r:             return key_r;
+		case XK_s:             return key_s;
+		case XK_t:             return key_t;
+		case XK_u:             return key_u;
+		case XK_v:             return key_v;
+		case XK_w:             return key_w;
+		case XK_x:             return key_x;
+		case XK_y:             return key_y;
+		case XK_z:             return key_z;
+		case XK_A:             return key_A;
+		case XK_B:             return key_B;
+		case XK_C:             return key_C;
+		case XK_D:             return key_D;
+		case XK_E:             return key_E;
+		case XK_F:             return key_F;
+		case XK_G:             return key_G;
+		case XK_H:             return key_H;
+		case XK_I:             return key_I;
+		case XK_J:             return key_J;
+		case XK_K:             return key_K;
+		case XK_L:             return key_L;
+		case XK_M:             return key_M;
+		case XK_N:             return key_N;
+		case XK_O:             return key_O;
+		case XK_P:             return key_P;
+		case XK_Q:             return key_Q;
+		case XK_R:             return key_R;
+		case XK_S:             return key_S;
+		case XK_T:             return key_T;
+		case XK_U:             return key_U;
+		case XK_V:             return key_V;
+		case XK_W:             return key_W;
+		case XK_X:             return key_X;
+		case XK_Y:             return key_Y;
+		case XK_Z:             return key_Z;
+		case XK_KP_0:          return key_num_0;
+		case XK_KP_1:          return key_num_1;
+		case XK_KP_2:          return key_num_2;
+		case XK_KP_3:          return key_num_3;
+		case XK_KP_4:          return key_num_4;
+		case XK_KP_5:          return key_num_5;
+		case XK_KP_6:          return key_num_6;
+		case XK_KP_7:          return key_num_7;
+		case XK_KP_8:          return key_num_8;
+		case XK_KP_9:          return key_num_9;
+		case XK_KP_Divide:     return key_num_divide;
+		case XK_KP_Multiply:   return key_num_multiply;
+		case XK_KP_Subtract:   return key_num_subtract;
+		case XK_KP_Add:        return key_num_add;
+		case XK_KP_Enter:      return key_num_enter;
+		case XK_KP_Decimal:    return key_num_decimal;
+		case XK_KP_Delete:     return key_num_delete;
+		case XK_KP_Insert:     return key_num_insert;
+		case XK_KP_Home:       return key_num_home;
+		case XK_KP_End:        return key_num_end;
+		case XK_KP_Page_Up:    return key_num_page_up;
+		case XK_KP_Page_Down:  return key_num_page_down;
+		case XK_KP_Left:       return key_num_left;
+		case XK_KP_Right:      return key_num_right;
+		case XK_KP_Up:         return key_num_up;
+		case XK_KP_Down:       return key_num_down;
+		default:               return key_other;
+	}
+}
+
+} // namespace _
+
+
 #endif
 
 struct create_window_failure : public ds::exception
@@ -732,6 +912,44 @@ class Window
 				this->_on_mouse_move(x_, y_);
 				break;
 			}
+			case KeyPress:
+			case KeyRelease:
+			{
+				bool     down_     = xevent_.type == KeyPress;
+				KeyCode  key_code_ = KeyCode(xevent_.xkey.keycode);
+				int      key_syms_ = 1;
+				KeySym * key_sym_  = XGetKeyboardMapping(xevent_.xkey.display, key_code_, 1, &key_syms_);
+				int      state_    = xevent_.xkey.state;
+				key      key_      = key_other;
+				if(!down_)
+					int i = 0;
+				if(key_sym_ != nullptr)
+				{
+					if(state_ >= key_syms_)
+						key_ = _::_map_key(key_sym_[0]);
+					else
+					{
+						switch(*key_sym_)
+						{
+							case XK_Control_L:
+							case XK_Control_R:
+							case XK_Shift_L:
+							case XK_Shift_R:
+							case XK_Alt_L:
+							case XK_Alt_R:
+							case XK_Super_L:
+							case XK_Super_R:
+								key_ = _::_map_key(key_sym_[0]);
+								break;
+							default: 
+								key_ = _::_map_key(key_sym_[state_]);
+								break;
+						}
+					}
+				}
+				this->_on_key(key_, down_);
+				break;
+			}
 		}
 	}
 
@@ -778,12 +996,20 @@ class Window
 			on_mouse_wheel(x_, y_, delta_, vertical_);
 	}
 
+	void
+	_on_key(key key_, bool down_) noexcept
+	{
+		if(on_key)
+			on_key(key_, down_);
+	}
+
  public:
 	ds::callable<void(int,int)> on_move;
 	ds::callable<void(int,int)> on_size;
 	ds::callable<void(int,int,mouse_button,bool)> on_mouse_button;
 	ds::callable<void(int,int)>                   on_mouse_move;
 	ds::callable<void(int,int,int,bool)>          on_mouse_wheel;
+	ds::callable<void(key,bool)> on_key;
 
  public:
 	~Window() noexcept
@@ -866,7 +1092,8 @@ class Window
 			auto root_ = DefaultRootWindow(xdisplay_);
 			swa.colormap   = XCreateColormap(xdisplay_, root_, visual_->visual, AllocNone);
 			swa.event_mask = Expose | StructureNotifyMask | VisibilityChangeMask | ClientMessage
-			               | ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
+			               | ButtonPressMask | ButtonReleaseMask | PointerMotionMask 
+			               | KeyPressMask | KeyReleaseMask;
 			// swa.override_redirect  = True;
 			unsigned long swa_mask = CWColormap | CWEventMask; 
 			// swa_mask |= CWOverrideRedirect;

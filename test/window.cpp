@@ -12,7 +12,8 @@ int main()
 		window.on_size = [&](int w, int h) { mw::log << "size " << w << " " << h << mw::endl; };
 		window.on_mouse_button = [&](int x, int y, mw::mouse_button btn, bool down) { mw::log << "mouse button " << cstr_mouse_button(btn) << " " << down << "  " << x << " " << y << mw::endl; };
 		window.on_mouse_move   = [&](int x, int y) { mw::log << "mouse move " << "  " << x << " " << y << mw::endl; };
-		window.on_mouse_wheel  = [&](int x, int y, int delta, bool vertical) { mw::log << "mouse wheel " << x << " " << y << " " << delta << " " << vertical << "  " << mw::endl; };
+		window.on_mouse_wheel  = [&](int x, int y, int delta, bool vertical) { mw::log << "mouse wheel " << x << " " << y << " " << delta << " " << vertical << mw::endl; };
+		window.on_key = [&](mw::key key, bool down) { mw::log << "key " << cstr_key(key) << " " << down << mw::endl; };
 		assert(window.show());
 		mw::log << (char const *)glfl::GL::get_string(glfl::GL::VERSION) << mw::endl;
 		while(window)
