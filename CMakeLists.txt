@@ -1,5 +1,5 @@
 cmake_minimum_required( VERSION 3.4 )
-project( MPW VERSION 0.1.0 DESCRIPTION "multi-platform windowing" )
+project( MPW VERSION 0.5.17 DESCRIPTION "multi-platform windowing" )
 
 set( BUILD_TESTS ON CACHE BOOL "" )
 
