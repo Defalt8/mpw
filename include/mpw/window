@@ -837,32 +837,6 @@ _map_key(KeySym key_sym_)
 		case XK_x:             return key_x;
 		case XK_y:             return key_y;
 		case XK_z:             return key_z;
-		case XK_A:             return key_A;
-		case XK_B:             return key_B;
-		case XK_C:             return key_C;
-		case XK_D:             return key_D;
-		case XK_E:             return key_E;
-		case XK_F:             return key_F;
-		case XK_G:             return key_G;
-		case XK_H:             return key_H;
-		case XK_I:             return key_I;
-		case XK_J:             return key_J;
-		case XK_K:             return key_K;
-		case XK_L:             return key_L;
-		case XK_M:             return key_M;
-		case XK_N:             return key_N;
-		case XK_O:             return key_O;
-		case XK_P:             return key_P;
-		case XK_Q:             return key_Q;
-		case XK_R:             return key_R;
-		case XK_S:             return key_S;
-		case XK_T:             return key_T;
-		case XK_U:             return key_U;
-		case XK_V:             return key_V;
-		case XK_W:             return key_W;
-		case XK_X:             return key_X;
-		case XK_Y:             return key_Y;
-		case XK_Z:             return key_Z;
 		case XK_KP_0:          return key_num_0;
 		case XK_KP_1:          return key_num_1;
 		case XK_KP_2:          return key_num_2;
@@ -1176,37 +1150,8 @@ class Window
 			case KeyRelease:
 			{
 				bool     down_     = xevent_.type == KeyPress;
-				KeyCode  key_code_ = KeyCode(xevent_.xkey.keycode);
-				int      key_syms_ = 1;
-				KeySym * key_sym_  = XGetKeyboardMapping(xevent_.xkey.display, key_code_, 1, &key_syms_);
 				int      state_    = xevent_.xkey.state;
-				key      key_      = key_other;
-				if(!down_)
-					int i = 0;
-				if(key_sym_ != nullptr)
-				{
-					if(state_ >= key_syms_)
-						key_ = _::_map_key(key_sym_[0]);
-					else
-					{
-						switch(*key_sym_)
-						{
-							case XK_Control_L:
-							case XK_Control_R:
-							case XK_Shift_L:
-							case XK_Shift_R:
-							case XK_Alt_L:
-							case XK_Alt_R:
-							case XK_Super_L:
-							case XK_Super_R:
-								key_ = _::_map_key(key_sym_[0]);
-								break;
-							default: 
-								key_ = _::_map_key(key_sym_[state_]);
-								break;
-						}
-					}
-				}
+				key      key_      = _::_map_key(XLookupKeysym(&xevent_.xkey, (state_ & Mod2Mask ? 1 : 0)));
 				this->_on_key(key_, down_);
 				break;
 			}
@@ -1349,13 +1294,16 @@ class Window
 		ds_throw_if_alt(visual_ == nullptr, assert(visual_ != nullptr); return);
 		{
 			XSetWindowAttributes swa;
-			auto root_ = DefaultRootWindow(xdisplay_);
+			auto root_     = DefaultRootWindow(xdisplay_);
+			auto screen    = DefaultScreen(xdisplay_);
 			swa.colormap   = XCreateColormap(xdisplay_, root_, visual_->visual, AllocNone);
 			swa.event_mask = Expose | StructureNotifyMask | VisibilityChangeMask | ClientMessage
 			               | ButtonPressMask | ButtonReleaseMask | PointerMotionMask 
 			               | KeyPressMask | KeyReleaseMask;
+			swa.background_pixel = XWhitePixel(xdisplay_, screen);
+			swa.border_pixel     = XBlackPixel(xdisplay_, screen);
 			// swa.override_redirect  = True;
-			unsigned long swa_mask = CWColormap | CWEventMask; 
+			unsigned long swa_mask = CWColormap | CWEventMask | CWBackPixel | CWBorderPixel; 
 			// swa_mask |= CWOverrideRedirect;
 			_xwindow   = XCreateWindow(xdisplay_, root_, 0, 0, width_, height_, 0, visual_->depth
 									, InputOutput, visual_->visual, swa_mask, &swa);
@@ -1440,6 +1388,27 @@ class Window
 		if(XMapRaised(_display->_xdisplay, _xwindow) != False)
 		{
 			_raised = true;
+			return true;
+		}
+	  #endif
+		return false;
+	}
+
+	bool
+	enable_vsync(bool sync = true) noexcept(false)
+	{
+	  #ifdef __WIN32
+	  #else
+		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
+		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
+		ds_throw_if(_xwindow == _null_xwindow, invalid_window());
+		ds_throw_if_alt(_xwindow == _null_xwindow, assert(_xwindow != _null_xwindow); return false);
+		using namespace mw::_glx;
+		using glxSwapIntervalEXT_t = void(*)(::Display *, GLXDrawable, int);
+		static glxSwapIntervalEXT_t glxSwapIntervalEXT = reinterpret_cast<glxSwapIntervalEXT_t>(glXGetProcAddress((unsigned char const *)"glxSwapIntervalEXT"));
+		if(glxSwapIntervalEXT != nullptr)
+		{
+			glxSwapIntervalEXT(_display->_xdisplay, _xwindow, int(sync));
 			return true;
 		}
 	  #endif

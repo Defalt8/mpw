@@ -147,32 +147,6 @@ enum key
 	key_x,
 	key_y,
 	key_z,
-	key_A,
-	key_B,
-	key_C,
-	key_D,
-	key_E,
-	key_F,
-	key_G,
-	key_H,
-	key_I,
-	key_J,
-	key_K,
-	key_L,
-	key_M,
-	key_N,
-	key_O,
-	key_P,
-	key_Q,
-	key_R,
-	key_S,
-	key_T,
-	key_U,
-	key_V,
-	key_W,
-	key_X,
-	key_Y,
-	key_Z,
 	key_num_0,
 	key_num_1,
 	key_num_2,
@@ -322,32 +296,6 @@ cstr_key(key key_)
 		case key_x:                   return "x";
 		case key_y:                   return "y";
 		case key_z:                   return "z";
-		case key_A:                   return "A";
-		case key_B:                   return "B";
-		case key_C:                   return "C";
-		case key_D:                   return "D";
-		case key_E:                   return "E";
-		case key_F:                   return "F";
-		case key_G:                   return "G";
-		case key_H:                   return "H";
-		case key_I:                   return "I";
-		case key_J:                   return "J";
-		case key_K:                   return "K";
-		case key_L:                   return "L";
-		case key_M:                   return "M";
-		case key_N:                   return "N";
-		case key_O:                   return "O";
-		case key_P:                   return "P";
-		case key_Q:                   return "Q";
-		case key_R:                   return "R";
-		case key_S:                   return "S";
-		case key_T:                   return "T";
-		case key_U:                   return "U";
-		case key_V:                   return "V";
-		case key_W:                   return "W";
-		case key_X:                   return "X";
-		case key_Y:                   return "Y";
-		case key_Z:                   return "Z";
 		case key_num_0:               return "Num_0";
 		case key_num_1:               return "Num_1";
 		case key_num_2:               return "Num_2";
