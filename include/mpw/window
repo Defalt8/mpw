@@ -599,57 +599,77 @@ _map_key(DWORD key_code_, DWORD scancode_ = 0)
 		case VK_DECIMAL_:       return key_num_decimal;
 		default:
 		{
-			UINT char_code   = MapVirtualKeyA(key_code_, MAPVK_VK_TO_CHAR_);
-			bool shift_down_ = GetKeyState(VK_SHIFT_) & 0x10000000;
+			UINT char_code = MapVirtualKeyA(key_code_, MAPVK_VK_TO_CHAR_);
 			switch(char_code)
 			{
-				case '`':  return shift_down_ ? key_tilde : key_back_tick;
-				case '1':  return shift_down_ ? key_exclamation : key_minus;
-				case '2':  return shift_down_ ? key_at : key_equal;
-				case '3':  return shift_down_ ? key_numbersign : key_lbracket;
-				case '4':  return shift_down_ ? key_dollarsign : key_rbracket;
-				case '5':  return shift_down_ ? key_percent : key_back_slash;
-				case '6':  return shift_down_ ? key_circumflex : key_semicolon;
-				case '7':  return shift_down_ ? key_ampersand : key_quote;
-				case '8':  return shift_down_ ? key_asterisk : key_comma;
-				case '9':  return shift_down_ ? key_lparenthesis : key_period;
-				case '0':  return shift_down_ ? key_rparenthesis : key_slash;
-				case '-':  return shift_down_ ? key_underscore : key_1;
-				case '=':  return shift_down_ ? key_plus : key_2;
-				case '[':  return shift_down_ ? key_lbrace : key_3;
-				case ']':  return shift_down_ ? key_rbrace : key_4;
-				case '\\': return shift_down_ ? key_bar : key_5;
-				case ';':  return shift_down_ ? key_colon : key_6;
-				case '\'': return shift_down_ ? key_double_quote : key_7;
-				case ',':  return shift_down_ ? key_less : key_8;
-				case '.':  return shift_down_ ? key_greater : key_9;
-				case '/':  return shift_down_ ? key_question : key_0;
-				case 'A':  return shift_down_ ? key_A : key_a;
-				case 'B':  return shift_down_ ? key_B : key_b;
-				case 'C':  return shift_down_ ? key_C : key_c;
-				case 'D':  return shift_down_ ? key_D : key_d;
-				case 'E':  return shift_down_ ? key_E : key_e;
-				case 'F':  return shift_down_ ? key_F : key_f;
-				case 'G':  return shift_down_ ? key_G : key_g;
-				case 'H':  return shift_down_ ? key_H : key_h;
-				case 'I':  return shift_down_ ? key_I : key_i;
-				case 'J':  return shift_down_ ? key_J : key_j;
-				case 'K':  return shift_down_ ? key_K : key_k;
-				case 'L':  return shift_down_ ? key_L : key_l;
-				case 'M':  return shift_down_ ? key_M : key_m;
-				case 'N':  return shift_down_ ? key_N : key_n;
-				case 'O':  return shift_down_ ? key_O : key_o;
-				case 'P':  return shift_down_ ? key_P : key_p;
-				case 'Q':  return shift_down_ ? key_Q : key_q;
-				case 'R':  return shift_down_ ? key_R : key_r;
-				case 'S':  return shift_down_ ? key_S : key_s;
-				case 'T':  return shift_down_ ? key_T : key_t;
-				case 'U':  return shift_down_ ? key_U : key_u;
-				case 'V':  return shift_down_ ? key_V : key_v;
-				case 'W':  return shift_down_ ? key_W : key_w;
-				case 'X':  return shift_down_ ? key_X : key_x;
-				case 'Y':  return shift_down_ ? key_Y : key_y;
-				case 'Z':  return shift_down_ ? key_Z : key_z;
+				case '`':  return key_back_tick;
+				case '~':  return key_tilde;
+				case '1':  return key_1;
+				case '!':  return key_exclamation;
+				case '2':  return key_2;
+				case '@':  return key_at;
+				case '3':  return key_3;
+				case '#':  return key_numbersign;
+				case '4':  return key_4;
+				case '$':  return key_dollarsign;
+				case '5':  return key_5;
+				case '%':  return key_percent;
+				case '6':  return key_6;
+				case '^':  return key_circumflex;
+				case '7':  return key_7;
+				case '&':  return key_ampersand;
+				case '8':  return key_8;
+				case '*':  return key_asterisk;
+				case '9':  return key_9;
+				case '(':  return key_lparenthesis;
+				case '0':  return key_0;
+				case ')':  return key_rparenthesis;
+				case '-':  return key_minus;
+				case '_':  return key_underscore;
+				case '=':  return key_equal;
+				case '+':  return key_plus;
+				case '[':  return key_lbracket;
+				case '{':  return key_lbrace;
+				case ']':  return key_rbracket;
+				case '}':  return key_rbrace;
+				case '\\': return key_back_slash;
+				case '|':  return key_bar;
+				case ';':  return key_semicolon;
+				case ':':  return key_colon;
+				case '\'': return key_quote;
+				case '"':  return key_double_quote;
+				case ',':  return key_comma;
+				case '<':  return key_less;
+				case '.':  return key_period;
+				case '>':  return key_greater;
+				case '/':  return key_slash;
+				case '?':  return key_question;
+				case 'A':  return key_a;
+				case 'B':  return key_b;
+				case 'C':  return key_c;
+				case 'D':  return key_d;
+				case 'E':  return key_e;
+				case 'F':  return key_f;
+				case 'G':  return key_g;
+				case 'H':  return key_h;
+				case 'I':  return key_i;
+				case 'J':  return key_j;
+				case 'K':  return key_k;
+				case 'L':  return key_l;
+				case 'M':  return key_m;
+				case 'N':  return key_n;
+				case 'O':  return key_o;
+				case 'P':  return key_p;
+				case 'Q':  return key_q;
+				case 'R':  return key_r;
+				case 'S':  return key_s;
+				case 'T':  return key_t;
+				case 'U':  return key_u;
+				case 'V':  return key_v;
+				case 'W':  return key_w;
+				case 'X':  return key_x;
+				case 'Y':  return key_y;
+				case 'Z':  return key_z;
 			}
 			return key_other;
 		}
@@ -1397,7 +1417,14 @@ class Window
 	bool
 	enable_vsync(bool sync = true) noexcept(false)
 	{
-	  #ifdef __WIN32
+	  #ifdef _WIN32
+		ds_throw_if(_winwindow == _null_winwindow, invalid_window());
+		ds_throw_if_alt(_winwindow == _null_winwindow, assert(_winwindow != _null_winwindow); return);
+		using namespace mw::_win;
+		using wglSwapIntervalEXT_t = BOOL(__stdcall *)(int);
+		static wglSwapIntervalEXT_t wglSwapIntervalEXT = reinterpret_cast<wglSwapIntervalEXT_t>(wglGetProcAddress("wglSwapIntervalEXT"));
+		if(wglSwapIntervalEXT != nullptr)
+			return wglSwapIntervalEXT(int(sync)) != 0;
 	  #else
 		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
 		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
