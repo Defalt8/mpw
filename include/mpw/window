@@ -347,6 +347,8 @@ namespace _win {
 	static constexpr  DWORD WM_XBUTTONDOWN_       = 0x020B;
 	static constexpr  DWORD WM_XBUTTONUP_         = 0x020C;
 	static constexpr  DWORD WM_XBUTTONDBLCLK_     = 0x020D;
+	static constexpr  DWORD WM_MOUSEHOVER_        = 0x02A1;
+	static constexpr  DWORD WM_MOUSELEAVE_        = 0x02A3;
 	static constexpr  WORD  IDC_ARROW_            = 32512;
 	static constexpr  WORD  IDC_IBEAM_            = 32513;
 	static constexpr  WORD  IDC_WAIT_             = 32514;
@@ -475,8 +477,8 @@ namespace _win {
 	static constexpr  UINT  MAPVK_VK_TO_CHAR_     = 2;
 	static constexpr  UINT  MAPVK_VSC_TO_VK_EX_   = 3;
 
-	static inline WORD _loword(DWORD dw) noexcept { return (dw & 0x0000FFFF); }
-	static inline WORD _hiword(DWORD dw) noexcept { return (dw & 0xFFFF0000) >> 16; }
+	template <typename R = WORD> static inline R _loword(DWORD dw) noexcept { return R(dw & 0x0000FFFF); }
+	template <typename R = WORD> static inline R _hiword(DWORD dw) noexcept { return R((dw & 0xFFFF0000) >> 16); }
 
 	MPW_WINAPI HMODULE  __stdcall LoadLibraryA(LPCSTR);
 	MPW_WINAPI BOOL     __stdcall FreeLibrary(HMODULE);
@@ -523,6 +525,9 @@ namespace _win {
 	MPW_WINAPI UINT     __stdcall MapVirtualKeyA(UINT, UINT);
 	MPW_WINAPI SHORT    __stdcall GetKeyState(int);
 	MPW_WINAPI SHORT    __stdcall GetAsyncKeyState(int);
+	MPW_WINAPI BOOL     __stdcall GetCursorPos(POINT *);
+	MPW_WINAPI BOOL     __stdcall SetCursorPos(int, int);
+	MPW_WINAPI int      __stdcall ShowCursor(BOOL);
 
 } // namespace _win
 
@@ -930,6 +935,7 @@ class Window
 	int          _width      = 0;
 	int          _height     = 0;
 	bool         _destroying = false;
+	bool         _cursor_vis = true;
   #ifdef _WIN32
 	using LRESULT   = _win::LRESULT;
 	using HINSTANCE = _win::HINSTANCE;
@@ -984,8 +990,8 @@ class Window
 						case SIZE_RESTORED_:
 						default:
 						{
-							int width  = _loword(DWORD(lparam));
-							int height = _hiword(DWORD(lparam));
+							int width  = _loword<int>(DWORD(lparam));
+							int height = _hiword<int>(DWORD(lparam));
 							window->_on_size(width, height);
 							return 0;
 						}
@@ -994,8 +1000,8 @@ class Window
 				}
 				case WM_MOVE_:
 				{
-					int    x_    = _loword(DWORD(lparam));
-					int    y_    = _hiword(DWORD(lparam));
+					int x_ = _loword<int>(DWORD(lparam));
+					int y_ = _hiword<int>(DWORD(lparam));
 					window->_on_move(x_, y_);
 					return 0;
 				}
@@ -1003,8 +1009,8 @@ class Window
 				case WM_LBUTTONUP_:
 				case WM_NCLBUTTONUP_:
 				{
-					int    x_    = _loword(DWORD(lparam));
-					int    y_    = _hiword(DWORD(lparam));
+					int x_ = _loword<int>(DWORD(lparam));
+					int y_ = _hiword<int>(DWORD(lparam));
 					bool   down_ = umsg == WM_LBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_left, down_);
 					return 0;
@@ -1013,9 +1019,9 @@ class Window
 				case WM_RBUTTONUP_:
 				case WM_NCRBUTTONUP_:
 				{
-					int    x_    = _loword(DWORD(lparam));
-					int    y_    = _hiword(DWORD(lparam));
-					bool   down_ = umsg == WM_RBUTTONDOWN_;
+					int  x_    = _loword<int>(DWORD(lparam));
+					int  y_    = _hiword<int>(DWORD(lparam));
+					bool down_ = umsg == WM_RBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_right, down_);
 					return 0;
 				}
@@ -1023,19 +1029,19 @@ class Window
 				case WM_MBUTTONUP_:
 				case WM_NCMBUTTONUP_:
 				{
-					int    x_    = _loword(DWORD(lparam));
-					int    y_    = _hiword(DWORD(lparam));
-					bool   down_ = umsg == WM_MBUTTONDOWN_;
+					int  x_    = _loword<int>(DWORD(lparam));
+					int  y_    = _hiword<int>(DWORD(lparam));
+					bool down_ = umsg == WM_MBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_middle, down_);
 					return 0;
 				}
 				case WM_XBUTTONDOWN_:
 				case WM_XBUTTONUP_:
 				{
-					int    x_    = _loword(DWORD(lparam));
-					int    y_    = _hiword(DWORD(lparam));
-					bool   down_ = umsg == WM_XBUTTONDOWN_;
-					short  xn_   = _hiword(DWORD(wparam));
+					int  x_    = _loword<int>(DWORD(lparam));
+					int  y_    = _hiword<int>(DWORD(lparam));
+					bool down_ = umsg == WM_XBUTTONDOWN_;
+					WORD xn_   = _hiword<WORD>(DWORD(wparam));
 					switch(xn_)
 					{
 						case 1:  window->_on_mouse_button(x_, y_, mb_extra1, down_); break;
@@ -1046,17 +1052,16 @@ class Window
 				}
 				case WM_MOUSEMOVE_:
 				{
-					int x_ = _loword(DWORD(lparam));
-					int y_ = _hiword(DWORD(lparam));
-					window->_on_mouse_move(x_, y_);
+					POINT point { _loword<int>(DWORD(lparam)), _hiword<int>(DWORD(lparam)) };
+					window->_on_mouse_move(point.x, point.y);
 					return 0;
 				}
 				case WM_MOUSEWHEEL_:
 				case WM_MOUSEHWHEEL_:
 				{
 					bool  vertical_ = umsg == WM_MOUSEWHEEL_;
-					int   delta_    = _hiword(DWORD(wparam));
-					POINT point_    = { _loword(DWORD(lparam)), _hiword(DWORD(lparam)) };
+					int   delta_    = _hiword<int>(DWORD(wparam));
+					POINT point_    = { _loword<int>(DWORD(lparam)), _hiword<int>(DWORD(lparam)) };
 					ScreenToClient(hwnd, &point_);
 					window->_on_mouse_wheel(point_.x, point_.y, delta_, vertical_);
 					return 0;
@@ -1186,19 +1191,25 @@ class Window
 	void 
 	_on_move(int x_, int y_) noexcept
 	{
-		_x  = x_;
-		_y = y_;
-		if(on_move)
-			on_move(_x, _y);
+		if(x_ != _x || y_ != _y)
+		{
+			_x = x_;
+			_y = y_;
+			if(on_move)
+				on_move(_x, _y);
+		}
 	}
 
 	void 
 	_on_size(int width_, int height_) noexcept
 	{
-		_width  = width_;
-		_height = height_;
-		if(on_size)
-			on_size(_width, _height);
+		if(width_ != _width || height_ != _height)
+		{
+			_width  = width_;
+			_height = height_;
+			if(on_size)
+				on_size(_width, _height);
+		}
 	}
 
 	void
@@ -1492,7 +1503,11 @@ class Window
 	  #ifdef _WIN32
 		using namespace mw::_win;
 		if(_winwindow != _null_winwindow)
-			return SetWindowPos(_winwindow, _null_winwindow, x_, y_, 0, 0, SWP_NOSIZE_) != 0;
+		{
+			RECT rc { x_, y_, _width, _height };
+			AdjustWindowRectEx(&rc, _style, 0, 0);
+			return SetWindowPos(_winwindow, _null_winwindow, rc.left, rc.top, 0, 0, SWP_NOSIZE_) != 0;
+		}
 	  #else
 		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
 			return XMoveWindow(_display->_xdisplay, _xwindow, x_, y_) == 0;
@@ -1506,7 +1521,11 @@ class Window
 	  #ifdef _WIN32
 		using namespace mw::_win;
 		if(_winwindow != _null_winwindow)
-			return SetWindowPos(_winwindow, _null_winwindow, 0, 0, width_, height_, SWP_NOMOVE_) != 0;
+		{
+			RECT rc { 0, 0, width_, height_ };
+			AdjustWindowRectEx(&rc, _style, 0, 0);
+			return SetWindowPos(_winwindow, _null_winwindow, 0, 0, (rc.right - rc.left), (rc.bottom - rc.top), SWP_NOMOVE_) != 0;
+		}
 	  #else
 		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
 			return XResizeWindow(_display->_xdisplay, _xwindow, width_, height_) == 0;
@@ -1514,8 +1533,83 @@ class Window
 		return false;
 	}
 
-	int width()  const noexcept { return _width; }
-	int height() const noexcept { return _height; }
+	bool
+	show_cursor(bool show_ = true) noexcept
+	{
+	  #ifdef _WIN32
+		if(_winwindow != _null_winwindow)
+		{
+			using namespace mw::_win;
+			_cursor_vis = show_;
+			ShowCursor(show_);
+			return true; 
+		}
+	  #else
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
+		{
+			auto & xdisplay_ = _display->_xdisplay;
+			_cursor_vis = show_;
+			if(show_)
+				XUndefineCursor(xdisplay_, _xwindow);
+			else
+			{
+				XColor bg {}, fg {};
+				char bmp[1][1]     = {{0}};
+				Pixmap pix         = XCreatePixmapFromBitmapData(xdisplay_, _xwindow, &bmp[0][0], 1, 1, 0, 1, 1);
+				Pixmap pix_mask    = XCreatePixmapFromBitmapData(xdisplay_, _xwindow, &bmp[0][0], 1, 1, 1, 0, 1);
+				Cursor null_cursor = XCreatePixmapCursor(xdisplay_, pix, pix_mask, &bg, &fg, 0, 0);
+				XDefineCursor(xdisplay_, _xwindow, null_cursor);
+				XFreePixmap(xdisplay_, pix);
+				XFreePixmap(xdisplay_, pix_mask);
+			}
+			return true;
+		}
+	  #endif
+		return false;
+	}
+
+	bool 
+	set_cursor_position(int x_, int y_) noexcept
+	{
+	  #ifdef _WIN32
+		using namespace mw::_win;
+		return SetCursorPos(x_, y_) != 0;
+	  #else
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
+			return XWarpPointer(_display->_xdisplay, None, _xwindow, 0, 0, 0, 0, (x_ - _x), (y_ - _y)) != 0;
+	  #endif
+		return false;
+	}
+
+	bool 
+	get_cursor_position(int & x_, int & y_) noexcept
+	{
+	  #ifdef _WIN32
+		using namespace mw::_win;
+		POINT point;
+		if(GetCursorPos(&point) != 0)
+		{
+			x_ = point.x;
+			y_ = point.y;
+			return true;
+		}
+	  #else
+		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
+		{
+			::Window root, child;
+			int ch_x, ch_y;
+			unsigned int mask_;
+			return XQueryPointer(_display->_xdisplay, _xwindow, &root, &child, &x_, &y_, &ch_x, &ch_y, &mask_) != 0;
+		}
+	  #endif
+		return false;
+	}
+
+	int  x()      const noexcept { return _x; }
+	int  y()      const noexcept { return _y; }
+	int  width()  const noexcept { return _width; }
+	int  height() const noexcept { return _height; }
+	bool is_cursor_visible() const noexcept { return _cursor_vis; }
 
   #ifdef _WIN32
 	bool operator!() noexcept { return _winwindow == _null_winwindow; }
