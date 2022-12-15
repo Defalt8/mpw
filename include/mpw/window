@@ -746,6 +746,7 @@ _map_key(KeySym key_sym_)
 		case XK_Cancel:        return key_cancel;
 		case XK_BackSpace:     return key_backspace;
 		case XK_Tab:           return key_tab;
+		case XK_KP_Begin:
 		case XK_Clear:         return key_clear;
 		case XK_Return:        return key_enter;
 		case XK_Shift_L:       return key_lshift;
