@@ -290,6 +290,8 @@ class Window
 				bool     down_     = xevent_.type == KeyPress;
 				int      state_    = xevent_.xkey.state;
 				key      key_      = _::_map_key(XLookupKeysym(&xevent_.xkey, (state_ & Mod2Mask ? 1 : 0)));
+				if(key_ == key_other)
+					key_ = _::_map_key(XLookupKeysym(&xevent_.xkey, 0));
 				this->_on_key(key_, down_);
 				break;
 			}
@@ -527,6 +529,7 @@ class Window
 	  #endif
 	}
 
+	// NOTE: xlib implementation is not present.
 	bool
 	set_style(window_style style_) noexcept(false)
 	{
