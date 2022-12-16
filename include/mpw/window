@@ -1319,7 +1319,19 @@ class Window
 		ds_throw_if(display_._xdisplay == nullptr, invalid_display());
 		ds_throw_if_alt(display_._xdisplay == nullptr, assert(display_._xdisplay != nullptr); return);
 		using namespace mw::_glx;
-		int attributes_[] = { GLX_RGBA_, GLX_DEPTH_SIZE_, 24, GLX_DOUBLEBUFFER_, None };
+		int attributes_[]
+		{ 
+			  GLX_USE_GL_
+			, GLX_RGBA_
+			, GLX_RED_SIZE_    , 8
+			, GLX_GREEN_SIZE_  , 8
+			, GLX_BLUE_SIZE_   , 8
+			, GLX_ALPHA_SIZE_  , 8
+			, GLX_DEPTH_SIZE_  , 24
+			, GLX_STENCIL_SIZE_, 8
+			, GLX_DOUBLEBUFFER_
+			, None 
+		};
 		auto * xdisplay_  = display_._xdisplay;
 		auto * visual_    = glXChooseVisual(xdisplay_, 0, attributes_);
 		ds_throw_if(visual_ == nullptr, create_window_failure());
