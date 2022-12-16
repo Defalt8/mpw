@@ -1,14 +1,15 @@
 #include <mpw/all>
 #include <ds/all>
-#ifdef _WIN32
-#	define WIN32_LEAN_AND_MEAN
-#	include <Windows.h>
-#endif
-#include <GL/gl.h>
+#include <coregl>
 
 int main()
 {
 	ds_try {
+		{
+			auto loaded_ = coregl::load();
+			ds_throw_if(!loaded_, 120);
+			ds_throw_if_alt(!loaded_, assert(loaded_); return 120);
+		}
 		mw::display display; 
 		mw::event   event;
 		mw::window  window(display, "main window", 640, 480);
@@ -68,7 +69,10 @@ int main()
 		};
 		window.enable_vsync();
 		assert(window.show());
-		mw::log << (char const *)glGetString(GL_VERSION) << mw::endl;
+		{
+			using namespace coregl::GL;
+			mw::log << (char const *)get_string(_version) << mw::endl;
+		}
 		mw::log << "testing: get_cursor_position -- using left mouse button" << mw::endl;
 		mw::log << "testing: set_cursor_position -- using right mouse button" << mw::endl;
 		mw::log << "testing: show_cursor -- using key h" << mw::endl;
@@ -93,8 +97,9 @@ int main()
 				float v1 = 0.5f * (1.f + cos(ct));
 				float v2 = 0.5f * (1.f + sin(1.38f * ct));
 				float v3 = 0.5f * (1.f + cos(-0.9f * ct));
-				glClearColor(v1, v2, v3, 1.f);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				using namespace coregl::GL;
+				clear_color(v1, v2, v3, 1.f);
+				clear(_color_buffer_bit | _depth_buffer_bit);
 				window.swap();
 			}
 		}
