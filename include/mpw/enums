@@ -6,6 +6,26 @@
 
 namespace mw {
 
+enum window_style
+{
+	ws_resizable = 0,
+	ws_normal    = ws_resizable,
+	ws_fixed,
+	ws_borderless,
+};
+
+static constexpr char const *
+cstr_window_style(window_style style_)
+{
+	switch(style_)
+	{
+		default:
+		case ws_resizable:   return "resizable";
+		case ws_fixed:       return "fixed";
+		case ws_borderless:  return "borderless";
+	}
+}
+
 enum mouse_button
 {
 	mb_other,

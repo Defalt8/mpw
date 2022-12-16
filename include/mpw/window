@@ -52,6 +52,9 @@ class Window
 	int          _height     = 0;
 	bool         _destroying = false;
 	bool         _cursor_vis = true;
+	bool         _win_vis    = false;
+	bool         _modif      = false;
+	window_style _style      = ws_normal;
   #ifdef _WIN32
 	using LRESULT_   = mw::_win::LRESULT_;
 	using HINSTANCE_ = mw::_win::HINSTANCE_;
@@ -66,7 +69,7 @@ class Window
 	HWND_      _winwindow = NULL;
 	HDC_       _windevctx = NULL;
 	HGLRC_     _winglctx  = NULL;
-	DWORD_     _style     = 0;
+	DWORD_     _winstyle  = 0;
   #else
 	static constexpr ::Window _null_xwindow = {};
 	::Window           _xwindow    = _null_xwindow;
@@ -300,7 +303,7 @@ class Window
 	void 
 	_on_move(int x_, int y_) noexcept
 	{
-		if(x_ != _x || y_ != _y)
+		if(!_modif && (x_ != _x || y_ != _y))
 		{
 			_x = x_;
 			_y = y_;
@@ -312,7 +315,7 @@ class Window
 	void 
 	_on_size(int width_, int height_) noexcept
 	{
-		if(width_ != _width || height_ != _height)
+		if(!_modif && (width_ != _width || height_ != _height))
 		{
 			_width  = width_;
 			_height = height_;
@@ -389,11 +392,11 @@ class Window
 			assert(res != NULL);
 			_registered = res != NULL;
 		}
-		_style = WS_OVERLAPPEDWINDOW_;
+		_winstyle = WS_OVERLAPPEDWINDOW_;
 		RECT_ rc { 0, 0, width_, height_ };
-		AdjustWindowRectEx(&rc, _style, 0, 0);
+		AdjustWindowRectEx(&rc, _winstyle, 0, 0);
 		HWND_ hwnd = CreateWindowExA(0, CLASS_NAME, _title.begin()
-			, _style
+			, _winstyle
 			, CW_USEDEFAULT_, CW_USEDEFAULT_, (rc.right - rc.left), (rc.bottom - rc.top)
 			, NULL, NULL, hinst, nullptr);
 		_winwindow = hwnd;
@@ -525,6 +528,56 @@ class Window
 	}
 
 	bool
+	set_style(window_style style_) noexcept(false)
+	{
+		if(style_ == _style)
+			return true;
+	  #ifdef _WIN32
+		ds_throw_if(_winwindow == NULL, invalid_window());
+		ds_throw_if_alt(_winwindow == NULL, assert(_winwindow != NULL); return false);
+		using namespace mw::_win;
+		DWORD_ winstyle_ = _winstyle;
+		switch(style_)
+		{
+			default:
+			case ws_resizable:  winstyle_ = WS_OVERLAPPEDWINDOW_; break;
+			case ws_fixed:      winstyle_ = WS_OVERLAPPED_ | WS_CAPTION_ | WS_SYSMENU_ | WS_MINIMIZEBOX_; break;
+			case ws_borderless: winstyle_ = 0; break;
+		}
+		_modif = true;
+		if(SetWindowLongA(_winwindow, GWL_STYLE_, LONG_(winstyle_)) != 0)
+		{
+			_winstyle = winstyle_;
+			_style    = style_;
+			if(_style == ws_borderless)
+			{
+				SetWindowPos(_winwindow, NULL, _x, _y, _width, _height, SWP_SHOWWINDOW_);
+			}
+			else
+			{
+				RECT_ rc { long(_x), long(_y), long(_width), long(_height) };
+				AdjustWindowRectEx(&rc, _winstyle, 0, 0);
+				SetWindowPos(_winwindow, NULL, rc.left, rc.top, int(rc.right - (rc.left - _x)), int(rc.bottom - (rc.top - _y)), _win_vis ? SWP_SHOWWINDOW_ : 0);
+			}
+			_modif = false;
+			return true;
+		}
+		_modif = false;
+	  #else
+		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
+		ds_throw_if_alt(_display == nullptr || _display->_xdisplay == nullptr, assert(_display != nullptr && _display._xdisplay != nullptr); return false);
+		ds_throw_if(_xwindow == _null_xwindow, invalid_window());
+		ds_throw_if_alt(_xwindow == _null_xwindow, assert(_xwindow != _null_xwindow); return false);
+		if(XMapRaised(_display->_xdisplay, _xwindow) != False)
+		{
+			_raised = true;
+			return true;
+		}
+	  #endif
+		return false;
+	}
+
+	bool
 	show() noexcept(false)
 	{
 	  #ifdef _WIN32
@@ -532,6 +585,7 @@ class Window
 		ds_throw_if_alt(_winwindow == NULL, assert(_winwindow != NULL); return false);
 		using namespace mw::_win;
 		ShowWindow(_winwindow, SW_NORMAL_);
+		_win_vis = true;
 		return true;
 	  #else
 		ds_throw_if(_display == nullptr || _display->_xdisplay == nullptr, invalid_display());
@@ -541,6 +595,7 @@ class Window
 		if(XMapRaised(_display->_xdisplay, _xwindow) != False)
 		{
 			_raised = true;
+			_win_vis = true;
 			return true;
 		}
 	  #endif
@@ -626,12 +681,22 @@ class Window
 		if(_winwindow != NULL)
 		{
 			RECT_ rc { long(x_), long(y_), long(_width), long(_height) };
-			AdjustWindowRectEx(&rc, _style, 0, 0);
-			return SetWindowPos(_winwindow, NULL, rc.left, rc.top, 0, 0, SWP_NOSIZE_) != 0;
+			AdjustWindowRectEx(&rc, _winstyle, 0, 0);
+			if(SetWindowPos(_winwindow, NULL, rc.left, rc.top, 0, 0, SWP_NOSIZE_) != 0)
+			{
+				this->_on_move(x_, y_);
+				return true;
+			}
 		}
 	  #else
 		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
-			return XMoveWindow(_display->_xdisplay, _xwindow, x_, y_) == 0;
+		{
+			if(XMoveWindow(_display->_xdisplay, _xwindow, x_, y_) == 0)	
+			{
+				this->_on_move(x_, y_);
+				return true;
+			}
+		}
 	  #endif
 		return false;
 	}
@@ -644,12 +709,24 @@ class Window
 		if(_winwindow != NULL)
 		{
 			RECT_ rc { 0, 0, long(width_), long(height_) };
-			AdjustWindowRectEx(&rc, _style, 0, 0);
-			return SetWindowPos(_winwindow, NULL, 0, 0, (rc.right - rc.left), (rc.bottom - rc.top), SWP_NOMOVE_) != 0;
+			AdjustWindowRectEx(&rc, _winstyle, 0, 0);
+			int w_ = rc.right - rc.left;
+			int h_ = rc.bottom - rc.top;
+			if(SetWindowPos(_winwindow, NULL, 0, 0, w_, h_, SWP_NOMOVE_) != 0)
+			{
+				this->_on_size(width_, height_);
+				return true;
+			}
 		}
 	  #else
 		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
-			return XResizeWindow(_display->_xdisplay, _xwindow, width_, height_) == 0;
+		{
+			if(XResizeWindow(_display->_xdisplay, _xwindow, width_, height_) == 0)
+			{
+				this->_on_size(width_, height_);
+				return true;
+			}
+		}
 	  #endif
 		return false;
 	}
@@ -660,28 +737,34 @@ class Window
 	  #ifdef _WIN32
 		if(_winwindow != NULL)
 		{
-			using namespace mw::_win;
-			_cursor_vis = show_;
-			ShowCursor(show_);
+			if(_cursor_vis != show_)
+			{
+				using namespace mw::_win;
+				_cursor_vis = show_;
+				ShowCursor(show_);
+			}
 			return true; 
 		}
 	  #else
 		if(_display != nullptr && _display->_xdisplay != nullptr && _xwindow != _null_xwindow)
 		{
-			auto & xdisplay_ = _display->_xdisplay;
-			_cursor_vis = show_;
-			if(show_)
-				XUndefineCursor(xdisplay_, _xwindow);
-			else
+			if(_cursor_vis != show_)
 			{
-				XColor bg {}, fg {};
-				char bmp[1][1]     = {{0}};
-				Pixmap pix         = XCreatePixmapFromBitmapData(xdisplay_, _xwindow, &bmp[0][0], 1, 1, 0, 1, 1);
-				Pixmap pix_mask    = XCreatePixmapFromBitmapData(xdisplay_, _xwindow, &bmp[0][0], 1, 1, 1, 0, 1);
-				Cursor null_cursor = XCreatePixmapCursor(xdisplay_, pix, pix_mask, &bg, &fg, 0, 0);
-				XDefineCursor(xdisplay_, _xwindow, null_cursor);
-				XFreePixmap(xdisplay_, pix);
-				XFreePixmap(xdisplay_, pix_mask);
+				auto & xdisplay_ = _display->_xdisplay;
+				_cursor_vis = show_;
+				if(show_)
+					XUndefineCursor(xdisplay_, _xwindow);
+				else
+				{
+					XColor bg {}, fg {};
+					char bmp[1][1]     = {{0}};
+					Pixmap pix         = XCreatePixmapFromBitmapData(xdisplay_, _xwindow, &bmp[0][0], 1, 1, 0, 1, 1);
+					Pixmap pix_mask    = XCreatePixmapFromBitmapData(xdisplay_, _xwindow, &bmp[0][0], 1, 1, 1, 0, 1);
+					Cursor null_cursor = XCreatePixmapCursor(xdisplay_, pix, pix_mask, &bg, &fg, 0, 0);
+					XDefineCursor(xdisplay_, _xwindow, null_cursor);
+					XFreePixmap(xdisplay_, pix);
+					XFreePixmap(xdisplay_, pix_mask);
+				}
 			}
 			return true;
 		}
@@ -726,11 +809,12 @@ class Window
 		return false;
 	}
 
-	int  x()      const noexcept { return _x; }
-	int  y()      const noexcept { return _y; }
-	int  width()  const noexcept { return _width; }
-	int  height() const noexcept { return _height; }
-	bool is_cursor_visible() const noexcept { return _cursor_vis; }
+	int          x()                 const noexcept { return _x; }
+	int          y()                 const noexcept { return _y; }
+	int          width()             const noexcept { return _width; }
+	int          height()            const noexcept { return _height; }
+	bool         is_cursor_visible() const noexcept { return _cursor_vis; }
+	window_style style()             const noexcept { return _style; }
 
   #ifdef _WIN32
 	bool operator!() noexcept { return _winwindow == NULL; }

@@ -28,13 +28,70 @@ int main()
 		int  rbtn_x = 0, rbtn_y = 0;
 		int  pbtn_x = 0, pbtn_y = 0;
 		bool show_cursor = true;
+		bool fullscreen  = false;
+		int  rwin_x = 0, rwin_y = 0;
+		int  rwin_w = 0, rwin_h = 0;
+		mw::window_style rstyle {};
 		window.on_key = [&](mw::key key, bool down)
 		{
-			if(key == mw::key_h && !down)
+			if(key == mw::key_h)
 			{
-				show_cursor = !show_cursor;
-				window.show_cursor(show_cursor);
-				mw::log << (show_cursor ? "show" : "hide") << mw::endl;
+				if(!down)
+				{
+					show_cursor = !show_cursor;
+					window.show_cursor(show_cursor);
+					mw::log << (show_cursor ? "show cursor" : "hide cursor") << mw::endl;
+				}
+			}
+			else if(key == mw::key_r)
+			{
+				if(!down)
+				{
+					window.set_style(mw::ws_resizable);
+					mw::log << "change window style to resizable" << mw::endl;
+				}
+			}
+			else if(key == mw::key_f)
+			{
+				if(!down)
+				{
+					window.set_style(mw::ws_fixed);
+					mw::log << "change window style to fixed" << mw::endl;
+				}
+			}
+			else if(key == mw::key_b)
+			{
+				if(!down)
+				{
+					window.set_style(mw::ws_borderless);
+					mw::log << "change window style to borderless" << mw::endl;
+				}
+			}
+			else if(key == mw::key_f11)
+			{
+				if(!down)
+				{
+					fullscreen = !fullscreen;
+					if(fullscreen)
+					{
+						rwin_x = window.x();
+						rwin_y = window.y();
+						rwin_w = window.width();
+						rwin_h = window.height();
+						rstyle = window.style();
+						window.set_style(mw::ws_borderless);
+						window.set_position(0, 0);
+						window.set_size(display.width(), display.height());
+						mw::log << "change window to fullscreen" << mw::endl;
+					}
+					else
+					{
+						window.set_position(rwin_x, rwin_y);
+						window.set_size(rwin_w, rwin_h);
+						window.set_style(rstyle);
+						mw::log << "restore window" << mw::endl;
+					}
+				}
 			}
 		};
 		window.on_mouse_button = [&](int x, int y, mw::mouse_button btn, bool down) 
@@ -69,12 +126,16 @@ int main()
 				}
 			}
 		};
+		mw::log << display.width() << " " << display.height() << mw::endl;
+		// // fullscreen
 		window.enable_vsync();
 		assert(window.show());
 		mw::log << (char const *)gl::get_string(gl::_version) << mw::endl;
 		mw::log << "testing: get_cursor_position -- using left mouse button" << mw::endl;
 		mw::log << "testing: set_cursor_position -- using right mouse button" << mw::endl;
 		mw::log << "testing: show_cursor -- using key h" << mw::endl;
+		mw::log << "testing: set_style -- using keys r/f/b" << mw::endl;
+		mw::log << "testing: fullscreen mode -- using key F11" << mw::endl;
 		while(window)
 		{
 			if(mbtn_left_down)
@@ -82,7 +143,7 @@ int main()
 				int x = 0, y = 0;
 				if(window.get_cursor_position(x, y) && (x != pbtn_x || y != pbtn_y))
 				{
-					mw::log << x << " " << y << mw::endl;
+					// mw::log << x << " " << y << mw::endl;
 					pbtn_x = x; pbtn_y = y;
 					int win_x = pwin_x + (x - lbtn_x);
 					int win_y = pwin_y + (y - lbtn_y);
