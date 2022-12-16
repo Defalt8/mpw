@@ -990,8 +990,8 @@ class Window
 						case SIZE_RESTORED_:
 						default:
 						{
-							int width  = _loword<int>(DWORD(lparam));
-							int height = _hiword<int>(DWORD(lparam));
+							int width  = _loword<short>(DWORD(lparam));
+							int height = _hiword<short>(DWORD(lparam));
 							window->_on_size(width, height);
 							return 0;
 						}
@@ -1000,37 +1000,34 @@ class Window
 				}
 				case WM_MOVE_:
 				{
-					int x_ = _loword<int>(DWORD(lparam));
-					int y_ = _hiword<int>(DWORD(lparam));
+					int x_ = _loword<short>(DWORD(lparam));
+					int y_ = _hiword<short>(DWORD(lparam));
 					window->_on_move(x_, y_);
 					return 0;
 				}
 				case WM_LBUTTONDOWN_:
 				case WM_LBUTTONUP_:
-				case WM_NCLBUTTONUP_:
 				{
-					int x_ = _loword<int>(DWORD(lparam));
-					int y_ = _hiword<int>(DWORD(lparam));
+					int x_ = _loword<short>(DWORD(lparam));
+					int y_ = _hiword<short>(DWORD(lparam));
 					bool   down_ = umsg == WM_LBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_left, down_);
 					return 0;
 				}
 				case WM_RBUTTONDOWN_:
 				case WM_RBUTTONUP_:
-				case WM_NCRBUTTONUP_:
 				{
-					int  x_    = _loword<int>(DWORD(lparam));
-					int  y_    = _hiword<int>(DWORD(lparam));
+					int  x_    = _loword<short>(DWORD(lparam));
+					int  y_    = _hiword<short>(DWORD(lparam));
 					bool down_ = umsg == WM_RBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_right, down_);
 					return 0;
 				}
 				case WM_MBUTTONDOWN_:
 				case WM_MBUTTONUP_:
-				case WM_NCMBUTTONUP_:
 				{
-					int  x_    = _loword<int>(DWORD(lparam));
-					int  y_    = _hiword<int>(DWORD(lparam));
+					int  x_    = _loword<short>(DWORD(lparam));
+					int  y_    = _hiword<short>(DWORD(lparam));
 					bool down_ = umsg == WM_MBUTTONDOWN_;
 					window->_on_mouse_button(x_, y_, mb_middle, down_);
 					return 0;
@@ -1038,8 +1035,8 @@ class Window
 				case WM_XBUTTONDOWN_:
 				case WM_XBUTTONUP_:
 				{
-					int  x_    = _loword<int>(DWORD(lparam));
-					int  y_    = _hiword<int>(DWORD(lparam));
+					int  x_    = _loword<short>(DWORD(lparam));
+					int  y_    = _hiword<short>(DWORD(lparam));
 					bool down_ = umsg == WM_XBUTTONDOWN_;
 					WORD xn_   = _hiword<WORD>(DWORD(wparam));
 					switch(xn_)
@@ -1052,7 +1049,7 @@ class Window
 				}
 				case WM_MOUSEMOVE_:
 				{
-					POINT point { _loword<int>(DWORD(lparam)), _hiword<int>(DWORD(lparam)) };
+					POINT point { _loword<short>(DWORD(lparam)), _hiword<short>(DWORD(lparam)) };
 					window->_on_mouse_move(point.x, point.y);
 					return 0;
 				}
@@ -1060,8 +1057,8 @@ class Window
 				case WM_MOUSEHWHEEL_:
 				{
 					bool  vertical_ = umsg == WM_MOUSEWHEEL_;
-					int   delta_    = _hiword<int>(DWORD(wparam));
-					POINT point_    = { _loword<int>(DWORD(lparam)), _hiword<int>(DWORD(lparam)) };
+					int   delta_    = _hiword<short>(DWORD(wparam));
+					POINT point_    = { _loword<short>(DWORD(lparam)), _hiword<short>(DWORD(lparam)) };
 					ScreenToClient(hwnd, &point_);
 					window->_on_mouse_wheel(point_.x, point_.y, delta_, vertical_);
 					return 0;
@@ -1241,12 +1238,12 @@ class Window
 	}
 
  public:
-	ds::callable<void(int,int)> on_move;
-	ds::callable<void(int,int)> on_size;
+	ds::callable<void(int,int)>  on_move;
+	ds::callable<void(int,int)>  on_size;
+	ds::callable<void(key,bool)> on_key;
 	ds::callable<void(int,int,mouse_button,bool)> on_mouse_button;
 	ds::callable<void(int,int)>                   on_mouse_move;
 	ds::callable<void(int,int,int,bool)>          on_mouse_wheel;
-	ds::callable<void(key,bool)> on_key;
 
  public:
 	~Window() noexcept
@@ -1516,7 +1513,7 @@ class Window
 		using namespace mw::_win;
 		if(_winwindow != _null_winwindow)
 		{
-			RECT rc { x_, y_, _width, _height };
+			RECT rc { long(x_), long(y_), long(_width), long(_height) };
 			AdjustWindowRectEx(&rc, _style, 0, 0);
 			return SetWindowPos(_winwindow, _null_winwindow, rc.left, rc.top, 0, 0, SWP_NOSIZE_) != 0;
 		}
@@ -1534,7 +1531,7 @@ class Window
 		using namespace mw::_win;
 		if(_winwindow != _null_winwindow)
 		{
-			RECT rc { 0, 0, width_, height_ };
+			RECT rc { 0, 0, long(width_), long(height_) };
 			AdjustWindowRectEx(&rc, _style, 0, 0);
 			return SetWindowPos(_winwindow, _null_winwindow, 0, 0, (rc.right - rc.left), (rc.bottom - rc.top), SWP_NOMOVE_) != 0;
 		}
