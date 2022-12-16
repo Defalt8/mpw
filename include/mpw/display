@@ -26,8 +26,9 @@ struct open_display_failure : public ds::exception
 
 class Display
 {
-  #ifdef _WIN32
-  #else
+	int _width  = 0;
+	int _height = 0;
+  #ifndef _WIN32
   	::Display * _xdisplay;
   #endif
 
@@ -47,27 +48,46 @@ class Display
 
 	Display(char const * display_id_ = nullptr) noexcept(false)
   #ifdef _WIN32
-  	{}
+  	{
+		using namespace mw::_win;
+		HWND_ desktop_ = GetDesktopWindow();
+		if(desktop_ != NULL)
+		{
+			WINDOWPLACEMENT_ wpl_ {};
+			if(GetWindowPlacement(desktop_, &wpl_) != 0)
+			{
+				_width  = wpl_.rcNormalPosition.right;
+				_height = wpl_.rcNormalPosition.bottom;
+			}
+		}
+	}
   #else
 		: _xdisplay { XOpenDisplay(display_id_) }
 	{
 		ds_throw_if(_xdisplay == nullptr, open_display_failure());
 		ds_throw_alt(assert(_xdisplay != nullptr));
+		int screen_ = DefaultScreen(_xdisplay);
+		_width      = DisplayWidth(_xdisplay, screen_);
+		_height     = DisplayHeight(_xdisplay, screen_);
 	}
   #endif
 
 	void
 	close() noexcept
 	{
-	  #ifdef _WIN32
-	  #else
+	  #ifndef _WIN32
 		if(_xdisplay != nullptr)
 		{
 			XCloseDisplay(_xdisplay);
 			_xdisplay = nullptr;
 		}
 	  #endif
+		_width  = 0;
+		_height = 0;
 	}
+
+	int width()  const noexcept { return _width; }
+	int height() const noexcept { return _height; }
 
 };
 

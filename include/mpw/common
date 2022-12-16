@@ -10,6 +10,7 @@
 
 #include <ds/string>
 #include <ds/string_stream>
+#include "enums"
 
 namespace mw {
 
@@ -29,6 +30,908 @@ class  Window;
 
 static bool next_event(Display & display_, Event & event_, bool await_ = false) noexcept(false);
 static bool process_event(Event & event_) noexcept(false);
+
+} // namespace mw
+
+#ifdef _WIN32
+	struct HMODULE__;
+	struct HWND__;
+	struct HGLRC__;
+	struct HDC__;
+	struct HINSTANCE__;
+	struct HICON__;
+	struct HCURSOR__;
+	struct HBRUSH__;
+	struct HMENU__;
+	struct HCURSOR__;
+	struct HICON__;
+#else
+	struct GLXContext_;
+#endif
+
+#ifdef _WIN32
+#	if defined(_DLL)
+#		define MPW_WINAPI extern "C" __declspec(dllimport)
+#	else
+#		define MPW_WINAPI extern "C"
+#	endif
+#endif
+
+namespace mw {
+
+#ifdef _WIN32
+
+namespace _win {
+
+  #if defined(_WIN64)
+    using INT_PTR_   = long long;
+    using UINT_PTR_  = unsigned long long;
+    using LONG_PTR_  = long long;
+    using ULONG_PTR_ = unsigned long long;
+  #else
+    using INT_PTR_   = int;
+    using UINT_PTR_  = unsigned int;
+    using LONG_PTR_  = long;
+    using ULONG_PTR_ = unsigned long;
+  #endif
+	using BOOL_      = int;
+	using BYTE_      = unsigned char;
+	using WORD_      = unsigned short;
+	using CHAR_      = char;
+	using SHORT_     = short;
+	using USHORT_    = unsigned short;
+	using LONG_      = long;
+	using INT_       = int;
+	using UINT_      = unsigned int;
+	using DWORD_     = unsigned long;
+	using ATOM_      = WORD_;
+	using LONG_      = long;
+	using WPARAM_    = UINT_PTR_;
+	using LPARAM_    = LONG_PTR_;
+	using LRESULT_   = LONG_PTR_;
+	using LPCSTR_    = char const *;
+	using HANDLE_    = void *;
+	using HMODULE_   = HMODULE__ *;
+	using HWND_      = HWND__ *;
+	using HGLRC_     = HGLRC__ *;
+	using HDC_       = HDC__ *;
+	using HINSTANCE_ = HINSTANCE__ *;
+	using HICON_     = HICON__ *;
+	using HCURSOR_   = HCURSOR__ *;
+	using HBRUSH_    = HBRUSH__ *;
+	using HMENU_     = HMENU__ *;
+	using HCURSOR_   = HCURSOR__ *;
+	using HICON_     = HICON__ *;
+	using FARPROC_   = INT_PTR_ (__stdcall *)(); 
+	using PROC_      = INT_PTR_ (__stdcall *)(); 
+	using WNDPROC_   = LRESULT_ (__stdcall *)(HWND_, UINT_, WPARAM_, LPARAM_);
+
+	struct POINT_ 
+	{
+		LONG_ x;
+		LONG_ y;
+	};
+
+	struct RECT_
+	{
+		LONG_ left;
+		LONG_ top;
+		LONG_ right;
+		LONG_ bottom;
+	};
+
+	struct WNDCLASSEXA_ 
+	{
+		UINT_        cbSize;
+		UINT_        style;
+		WNDPROC_     lpfnWndProc;
+		int          cbClsExtra;
+		int          cbWndExtra;
+		HINSTANCE_   hInstance;
+		HICON_       hIcon;
+		HCURSOR_     hCursor;
+		HBRUSH_      hbrBackground;
+		LPCSTR_      lpszMenuName;
+		LPCSTR_      lpszClassName;
+		HICON_       hIconSm;
+	};
+
+	struct PIXELFORMATDESCRIPTOR_
+	{
+		WORD_  nSize;
+		WORD_  nVersion;
+		DWORD_ dwFlags;
+		BYTE_  iPixelType;
+		BYTE_  cColorBits;
+		BYTE_  cRedBits;
+		BYTE_  cRedShift;
+		BYTE_  cGreenBits;
+		BYTE_  cGreenShift;
+		BYTE_  cBlueBits;
+		BYTE_  cBlueShift;
+		BYTE_  cAlphaBits;
+		BYTE_  cAlphaShift;
+		BYTE_  cAccumBits;
+		BYTE_  cAccumRedBits;
+		BYTE_  cAccumGreenBits;
+		BYTE_  cAccumBlueBits;
+		BYTE_  cAccumAlphaBits;
+		BYTE_  cDepthBits;
+		BYTE_  cStencilBits;
+		BYTE_  cAuxBuffers;
+		BYTE_  iLayerType;
+		BYTE_  bReserved;
+		DWORD_ dwLayerMask;
+		DWORD_ dwVisibleMask;
+		DWORD_ dwDamageMask;
+	};
+		
+	struct MSG_ 
+	{
+		HWND_        hwnd;
+		UINT_        message;
+		WPARAM_      wParam;
+		LPARAM_      lParam;
+		DWORD_       time;
+		POINT_       pt;
+	};
+
+	struct MINMAXINFO_ 
+	{
+		POINT_ ptReserved;
+		POINT_ ptMaxSize;
+		POINT_ ptMaxPosition;
+		POINT_ ptMinTrackSize;
+		POINT_ ptMaxTrackSize;
+	};
+
+	struct WINDOWPLACEMENT_ 
+	{
+		UINT_  length;
+		UINT_  flags;
+		UINT_  showCmd;
+		POINT_ ptMinPosition;
+		POINT_ ptMaxPosition;
+		RECT_  rcNormalPosition;
+	};
+
+	static constexpr  int    CW_USEDEFAULT_             = ((int)0x80000000);
+	static constexpr  DWORD_ CS_OWNDC_                  = 0x0020;
+	static constexpr  DWORD_ COLOR_WINDOW_              = 5;
+	static constexpr  BYTE_  PFD_TYPE_RGBA_             = 0;
+	static constexpr  BYTE_  PFD_TYPE_COLORINDEX_       = 1;
+	static constexpr  BYTE_  PFD_MAIN_PLANE_            = 0;
+	static constexpr  BYTE_  PFD_OVERLAY_PLANE_         = 1;
+	static constexpr  BYTE_  PFD_UNDERLAY_PLANE_        = BYTE_(-1);
+	static constexpr  DWORD_ PFD_DOUBLEBUFFER_          = 0x00000001;
+	static constexpr  DWORD_ PFD_STEREO_                = 0x00000002;
+	static constexpr  DWORD_ PFD_DRAW_TO_WINDOW_        = 0x00000004;
+	static constexpr  DWORD_ PFD_DRAW_TO_BITMAP_        = 0x00000008;
+	static constexpr  DWORD_ PFD_SUPPORT_GDI_           = 0x00000010;
+	static constexpr  DWORD_ PFD_SUPPORT_OPENGL_        = 0x00000020;
+	static constexpr  DWORD_ PFD_GENERIC_FORMAT_        = 0x00000040;
+	static constexpr  DWORD_ PFD_NEED_PALETTE_          = 0x00000080;
+	static constexpr  DWORD_ PFD_NEED_SYSTEM_PALETTE_   = 0x00000100;
+	static constexpr  DWORD_ PFD_SWAP_EXCHANGE_         = 0x00000200;
+	static constexpr  DWORD_ PFD_SWAP_COPY_             = 0x00000400;
+	static constexpr  DWORD_ PFD_SWAP_LAYER_BUFFERS_    = 0x00000800;
+	static constexpr  DWORD_ PFD_GENERIC_ACCELERATED_   = 0x00001000;
+	static constexpr  DWORD_ PFD_SUPPORT_DIRECTDRAW_    = 0x00002000;
+	static constexpr  DWORD_ PFD_DIRECT3D_ACCELERATED_  = 0x00004000;
+	static constexpr  DWORD_ PFD_SUPPORT_COMPOSITION_   = 0x00008000;
+	static constexpr  DWORD_ PFD_DEPTH_DONTCARE_        = 0x20000000;
+	static constexpr  DWORD_ PFD_DOUBLEBUFFER_DONTCARE_ = 0x40000000;
+	static constexpr  DWORD_ PFD_STEREO_DONTCARE_       = 0x80000000;
+
+	static constexpr  WORD_  SWP_NOSIZE_          = 0x0001;
+	static constexpr  WORD_  SWP_NOMOVE_          = 0x0002;
+	static constexpr  WORD_  SWP_NOZORDER_        = 0x0004;
+	static constexpr  WORD_  SWP_NOREDRAW_        = 0x0008;
+	static constexpr  WORD_  SWP_NOACTIVATE_      = 0x0010;
+	static constexpr  WORD_  SWP_FRAMECHANGED_    = 0x0020;
+	static constexpr  WORD_  SWP_SHOWWINDOW_      = 0x0040;
+	static constexpr  WORD_  SWP_HIDEWINDOW_      = 0x0080;
+	static constexpr  WORD_  SWP_NOCOPYBITS_      = 0x0100;
+	static constexpr  WORD_  SWP_NOOWNERZORDER_   = 0x0200;
+	static constexpr  WORD_  SWP_NOSENDCHANGING_  = 0x0400;
+	static constexpr  WORD_  SWP_DRAWFRAME_       = SWP_FRAMECHANGED_;
+	static constexpr  WORD_  SWP_NOREPOSITION_    = SWP_NOOWNERZORDER_;
+
+	static constexpr  DWORD_ SIZE_RESTORED_       = 0;
+	static constexpr  DWORD_ SIZE_MINIMIZED_      = 1;
+	static constexpr  DWORD_ SIZE_MAXIMIZED_      = 2;
+	static constexpr  DWORD_ SIZE_MAXSHOW_        = 3;
+	static constexpr  DWORD_ SIZE_MAXHIDE_        = 4;
+	static constexpr  DWORD_ WS_OVERLAPPED_        = 0x00000000L;
+	static constexpr  DWORD_ WS_POPUP_             = 0x80000000L;
+	static constexpr  DWORD_ WS_CHILD_             = 0x40000000L;
+	static constexpr  DWORD_ WS_MINIMIZE_          = 0x20000000L;
+	static constexpr  DWORD_ WS_VISIBLE_           = 0x10000000L;
+	static constexpr  DWORD_ WS_DISABLED_          = 0x08000000L;
+	static constexpr  DWORD_ WS_CLIPSIBLINGS_      = 0x04000000L;
+	static constexpr  DWORD_ WS_CLIPCHILDREN_      = 0x02000000L;
+	static constexpr  DWORD_ WS_MAXIMIZE_          = 0x01000000L;
+	static constexpr  DWORD_ WS_CAPTION_           = 0x00C00000L;
+	static constexpr  DWORD_ WS_BORDER_            = 0x00800000L;
+	static constexpr  DWORD_ WS_DLGFRAME_          = 0x00400000L;
+	static constexpr  DWORD_ WS_VSCROLL_           = 0x00200000L;
+	static constexpr  DWORD_ WS_HSCROLL_           = 0x00100000L;
+	static constexpr  DWORD_ WS_SYSMENU_           = 0x00080000L;
+	static constexpr  DWORD_ WS_THICKFRAME_        = 0x00040000L;
+	static constexpr  DWORD_ WS_GROUP_             = 0x00020000L;
+	static constexpr  DWORD_ WS_TABSTOP_           = 0x00010000L;
+	static constexpr  DWORD_ WS_MINIMIZEBOX_       = 0x00020000L;
+	static constexpr  DWORD_ WS_MAXIMIZEBOX_       = 0x00010000L;
+	static constexpr  DWORD_ WS_TILED_             = WS_OVERLAPPED_;
+	static constexpr  DWORD_ WS_ICONIC_            = WS_MINIMIZE_;
+	static constexpr  DWORD_ WS_SIZEBOX_           = WS_THICKFRAME_;
+	static constexpr  DWORD_ WS_OVERLAPPEDWINDOW_  =
+		  WS_OVERLAPPED_
+		| WS_CAPTION_
+		| WS_SYSMENU_
+		| WS_THICKFRAME_
+		| WS_MINIMIZEBOX_
+		| WS_MAXIMIZEBOX_;
+	static constexpr  DWORD_ WS_POPUPWINDOW_       = 
+		  WS_POPUP_
+        | WS_BORDER_
+        | WS_SYSMENU_;
+	static constexpr  DWORD_ WS_TILEDWINDOW_       = WS_OVERLAPPEDWINDOW_;
+	static constexpr  DWORD_ PM_NOREMOVE_          = 0x0000;
+	static constexpr  DWORD_ PM_REMOVE_            = 0x0001;
+	static constexpr  DWORD_ PM_NOYIELD_           = 0x0002;
+	static constexpr  DWORD_ WM_NULL_              = 0x0000;
+	static constexpr  DWORD_ WM_CREATE_            = 0x0001;
+	static constexpr  DWORD_ WM_DESTROY_           = 0x0002;
+	static constexpr  DWORD_ WM_MOVE_              = 0x0003;
+	static constexpr  DWORD_ WM_SIZE_              = 0x0005;
+	static constexpr  DWORD_ WM_ACTIVATE_          = 0x0006;
+	static constexpr  DWORD_ WA_INACTIVE_          = 0;
+	static constexpr  DWORD_ WA_ACTIVE_            = 1;
+	static constexpr  DWORD_ WA_CLICKACTIVE_       = 2;
+	static constexpr  DWORD_ WM_SETFOCUS_          = 0x0007;
+	static constexpr  DWORD_ WM_KILLFOCUS_         = 0x0008;
+	static constexpr  DWORD_ WM_ENABLE_            = 0x000A;
+	static constexpr  DWORD_ WM_SETREDRAW_         = 0x000B;
+	static constexpr  DWORD_ WM_SETTEXT_           = 0x000C;
+	static constexpr  DWORD_ WM_GETTEXT_           = 0x000D;
+	static constexpr  DWORD_ WM_GETTEXTLENGTH_     = 0x000E;
+	static constexpr  DWORD_ WM_PAINT_             = 0x000F;
+	static constexpr  DWORD_ WM_CLOSE_             = 0x0010;
+	static constexpr  DWORD_ WM_QUIT_              = 0x0012;
+	static constexpr  DWORD_ WM_ERASEBKGND_        = 0x0014;
+	static constexpr  DWORD_ WM_SYSCOLORCHANGE_    = 0x0015;
+	static constexpr  DWORD_ WM_SHOWWINDOW_        = 0x0018;
+	static constexpr  DWORD_ WM_WININICHANGE_      = 0x001A;
+	static constexpr  DWORD_ WM_DEVMODECHANGE_     = 0x001B;
+	static constexpr  DWORD_ WM_ACTIVATEAPP_       = 0x001C;
+	static constexpr  DWORD_ WM_FONTCHANGE_        = 0x001D;
+	static constexpr  DWORD_ WM_TIMECHANGE_        = 0x001E;
+	static constexpr  DWORD_ WM_CANCELMODE_        = 0x001F;
+	static constexpr  DWORD_ WM_SETCURSOR_         = 0x0020;
+	static constexpr  DWORD_ WM_MOUSEACTIVATE_     = 0x0021;
+	static constexpr  DWORD_ WM_CHILDACTIVATE_     = 0x0022;
+	static constexpr  DWORD_ WM_QUEUESYNC_         = 0x0023;
+	static constexpr  DWORD_ WM_GETMINMAXINFO_     = 0x0024;
+	static constexpr  DWORD_ WM_PAINTICON_         = 0x0026;
+	static constexpr  DWORD_ WM_ICONERASEBKGND_    = 0x0027;
+	static constexpr  DWORD_ WM_NEXTDLGCTL_        = 0x0028;
+	static constexpr  DWORD_ WM_SPOOLERSTATUS_     = 0x002A;
+	static constexpr  DWORD_ WM_DRAWITEM_          = 0x002B;
+	static constexpr  DWORD_ WM_MEASUREITEM_       = 0x002C;
+	static constexpr  DWORD_ WM_DELETEITEM_        = 0x002D;
+	static constexpr  DWORD_ WM_VKEYTOITEM_        = 0x002E;
+	static constexpr  DWORD_ WM_CHARTOITEM_        = 0x002F;
+	static constexpr  DWORD_ WM_SETFONT_           = 0x0030;
+	static constexpr  DWORD_ WM_GETFONT_           = 0x0031;
+	static constexpr  DWORD_ WM_SETHOTKEY_         = 0x0032;
+	static constexpr  DWORD_ WM_GETHOTKEY_         = 0x0033;
+	static constexpr  DWORD_ WM_QUERYDRAGICON_     = 0x0037;
+	static constexpr  DWORD_ WM_COMPAREITEM_       = 0x0039;
+	static constexpr  DWORD_ WM_COMPACTING_        = 0x0041;
+	static constexpr  DWORD_ WM_WINDOWPOSCHANGING_ = 0x0046;
+	static constexpr  DWORD_ WM_WINDOWPOSCHANGED_  = 0x0047;
+	static constexpr  DWORD_ WM_NCCREATE_          = 0x0081;
+	static constexpr  DWORD_ WM_NCDESTROY_         = 0x0082;
+	static constexpr  DWORD_ WM_NCCALCSIZE_        = 0x0083;
+	static constexpr  DWORD_ WM_NCHITTEST_         = 0x0084;
+	static constexpr  DWORD_ WM_NCPAINT_           = 0x0085;
+	static constexpr  DWORD_ WM_NCACTIVATE_        = 0x0086;
+	static constexpr  DWORD_ WM_GETDLGCODE_        = 0x0087;
+	static constexpr  DWORD_ WM_NCMOUSEMOVE_       = 0x00A0;
+	static constexpr  DWORD_ WM_NCLBUTTONDOWN_     = 0x00A1;
+	static constexpr  DWORD_ WM_NCLBUTTONUP_       = 0x00A2;
+	static constexpr  DWORD_ WM_NCLBUTTONDBLCLK_   = 0x00A3;
+	static constexpr  DWORD_ WM_NCRBUTTONDOWN_     = 0x00A4;
+	static constexpr  DWORD_ WM_NCRBUTTONUP_       = 0x00A5;
+	static constexpr  DWORD_ WM_NCRBUTTONDBLCLK_   = 0x00A6;
+	static constexpr  DWORD_ WM_NCMBUTTONDOWN_     = 0x00A7;
+	static constexpr  DWORD_ WM_NCMBUTTONUP_       = 0x00A8;
+	static constexpr  DWORD_ WM_NCMBUTTONDBLCLK_   = 0x00A9;
+	static constexpr  DWORD_ WM_KEYFIRST_          = 0x0100;
+	static constexpr  DWORD_ WM_KEYDOWN_           = 0x0100;
+	static constexpr  DWORD_ WM_KEYUP_             = 0x0101;
+	static constexpr  DWORD_ WM_CHAR_              = 0x0102;
+	static constexpr  DWORD_ WM_DEADCHAR_          = 0x0103;
+	static constexpr  DWORD_ WM_SYSKEYDOWN_        = 0x0104;
+	static constexpr  DWORD_ WM_SYSKEYUP_          = 0x0105;
+	static constexpr  DWORD_ WM_SYSCHAR_           = 0x0106;
+	static constexpr  DWORD_ WM_SYSDEADCHAR_       = 0x0107;
+	static constexpr  DWORD_ WM_INITDIALOG_        = 0x0110;
+	static constexpr  DWORD_ WM_COMMAND_           = 0x0111;
+	static constexpr  DWORD_ WM_SYSCOMMAND_        = 0x0112;
+	static constexpr  DWORD_ WM_TIMER_             = 0x0113;
+	static constexpr  DWORD_ WM_HSCROLL_           = 0x0114;
+	static constexpr  DWORD_ WM_VSCROLL_           = 0x0115;
+	static constexpr  DWORD_ WM_INITMENU_          = 0x0116;
+	static constexpr  DWORD_ WM_INITMENUPOPUP_     = 0x0117;
+	static constexpr  DWORD_ WM_MOUSEFIRST_        = 0x0200;
+	static constexpr  DWORD_ WM_MOUSEMOVE_         = 0x0200;
+	static constexpr  DWORD_ WM_LBUTTONDOWN_       = 0x0201;
+	static constexpr  DWORD_ WM_LBUTTONUP_         = 0x0202;
+	static constexpr  DWORD_ WM_LBUTTONDBLCLK_     = 0x0203;
+	static constexpr  DWORD_ WM_RBUTTONDOWN_       = 0x0204;
+	static constexpr  DWORD_ WM_RBUTTONUP_         = 0x0205;
+	static constexpr  DWORD_ WM_RBUTTONDBLCLK_     = 0x0206;
+	static constexpr  DWORD_ WM_MBUTTONDOWN_       = 0x0207;
+	static constexpr  DWORD_ WM_MBUTTONUP_         = 0x0208;
+	static constexpr  DWORD_ WM_MBUTTONDBLCLK_     = 0x0209;
+	static constexpr  DWORD_ WM_MOUSEHWHEEL_       = 0x020E;
+	static constexpr  DWORD_ WM_MOUSEWHEEL_        = 0x020A;
+	static constexpr  DWORD_ WM_XBUTTONDOWN_       = 0x020B;
+	static constexpr  DWORD_ WM_XBUTTONUP_         = 0x020C;
+	static constexpr  DWORD_ WM_XBUTTONDBLCLK_     = 0x020D;
+	static constexpr  DWORD_ WM_MOUSEHOVER_        = 0x02A1;
+	static constexpr  DWORD_ WM_MOUSELEAVE_        = 0x02A3;
+	static constexpr  WORD_  IDC_ARROW_            = 32512;
+	static constexpr  WORD_  IDC_IBEAM_            = 32513;
+	static constexpr  WORD_  IDC_WAIT_             = 32514;
+	static constexpr  WORD_  IDC_CROSS_            = 32515;
+	static constexpr  WORD_  IDC_UPARROW_          = 32516;
+	static constexpr  WORD_  IDC_SIZE_             = 32640;
+	static constexpr  WORD_  IDC_ICON_             = 32641;
+	static constexpr  WORD_  IDC_SIZENWSE_         = 32642;
+	static constexpr  WORD_  IDC_SIZENESW_         = 32643;
+	static constexpr  WORD_  IDC_SIZEWE_           = 32644;
+	static constexpr  WORD_  IDC_SIZENS_           = 32645;
+	static constexpr  WORD_  IDC_SIZEALL_          = 32646;
+	static constexpr  WORD_  IDC_NO_               = 32648;
+	static constexpr  WORD_  IDI_APPLICATION_      = 32512;
+	static constexpr  WORD_  IDI_HAND_             = 32513;
+	static constexpr  WORD_  IDI_QUESTION_         = 32514;
+	static constexpr  WORD_  IDI_EXCLAMATION_      = 32515;
+	static constexpr  WORD_  IDI_ASTERISK_         = 32516;
+	static constexpr  int    GWL_WNDPROC_          = -4;
+	static constexpr  int    GWL_HINSTANCE_        = -6;
+	static constexpr  int    GWL_HWNDPARENT_       = -8;
+	static constexpr  int    GWL_STYLE_            = -16;
+	static constexpr  int    GWL_EXSTYLE_          = -20;
+	static constexpr  int    GWL_USERDATA_         = -21;
+	static constexpr  int    GWL_ID_               = -12;
+	static constexpr  int    GWLP_WNDPROC_         = -4;
+	static constexpr  int    GWLP_HINSTANCE_       = -6;
+	static constexpr  int    GWLP_HWNDPARENT_      = -8;
+	static constexpr  int    GWLP_USERDATA_        = -21;
+	static constexpr  int    GWLP_ID_              = -12;
+	static constexpr  int    SW_HIDE_              = 0;
+	static constexpr  int    SW_SHOWNORMAL_        = 1;
+	static constexpr  int    SW_NORMAL_            = 1;
+	static constexpr  int    SW_SHOWMINIMIZED_     = 2;
+	static constexpr  int    SW_SHOWMAXIMIZED_     = 3;
+	static constexpr  int    SW_MAXIMIZE_          = 3;
+	static constexpr  int    SW_SHOWNOACTIVATE_    = 4;
+	static constexpr  int    SW_SHOW_              = 5;
+	static constexpr  int    SW_MINIMIZE_          = 6;
+	static constexpr  int    SW_SHOWMINNOACTIVE_   = 7;
+	static constexpr  int    SW_SHOWNA_            = 8;
+	static constexpr  int    SW_RESTORE_           = 9;
+	static constexpr  int    SW_SHOWDEFAULT_       = 10;
+	static constexpr  int    SW_FORCEMINIMIZE_     = 11;
+	static constexpr  int    SW_MAX_               = 11;
+
+	static constexpr  DWORD_ VK_CANCEL_            = 0x03;
+	static constexpr  DWORD_ VK_BACK_              = 0x08;
+	static constexpr  DWORD_ VK_TAB_               = 0x09;
+	static constexpr  DWORD_ VK_CLEAR_             = 0x0C;
+	static constexpr  DWORD_ VK_RETURN_            = 0x0D;
+	static constexpr  DWORD_ VK_SHIFT_             = 0x10;
+	static constexpr  DWORD_ VK_CONTROL_           = 0x11;
+	static constexpr  DWORD_ VK_MENU_              = 0x12;
+	static constexpr  DWORD_ VK_PAUSE_             = 0x13;
+	static constexpr  DWORD_ VK_CAPITAL_           = 0x14;
+	static constexpr  DWORD_ VK_ESCAPE_            = 0x1B;
+	static constexpr  DWORD_ VK_SPACE_             = 0x20;
+	static constexpr  DWORD_ VK_PRIOR_             = 0x21;
+	static constexpr  DWORD_ VK_NEXT_              = 0x22;
+	static constexpr  DWORD_ VK_END_               = 0x23;
+	static constexpr  DWORD_ VK_HOME_              = 0x24;
+	static constexpr  DWORD_ VK_LEFT_              = 0x25;
+	static constexpr  DWORD_ VK_UP_                = 0x26;
+	static constexpr  DWORD_ VK_RIGHT_             = 0x27;
+	static constexpr  DWORD_ VK_DOWN_              = 0x28;
+	static constexpr  DWORD_ VK_SELECT_            = 0x29;
+	static constexpr  DWORD_ VK_EXECUTE_           = 0x2B;
+	static constexpr  DWORD_ VK_SNAPSHOT_          = 0x2C;
+	static constexpr  DWORD_ VK_INSERT_            = 0x2D;
+	static constexpr  DWORD_ VK_DELETE_            = 0x2E;
+	static constexpr  DWORD_ VK_HELP_              = 0x2F;
+	static constexpr  DWORD_ VK_LWIN_              = 0x5B;
+	static constexpr  DWORD_ VK_RWIN_              = 0x5C;
+	static constexpr  DWORD_ VK_APPS_              = 0x5D;
+	static constexpr  DWORD_ VK_NUMPAD0_           = 0x60;
+	static constexpr  DWORD_ VK_NUMPAD1_           = 0x61;
+	static constexpr  DWORD_ VK_NUMPAD2_           = 0x62;
+	static constexpr  DWORD_ VK_NUMPAD3_           = 0x63;
+	static constexpr  DWORD_ VK_NUMPAD4_           = 0x64;
+	static constexpr  DWORD_ VK_NUMPAD5_           = 0x65;
+	static constexpr  DWORD_ VK_NUMPAD6_           = 0x66;
+	static constexpr  DWORD_ VK_NUMPAD7_           = 0x67;
+	static constexpr  DWORD_ VK_NUMPAD8_           = 0x68;
+	static constexpr  DWORD_ VK_NUMPAD9_           = 0x69;
+	static constexpr  DWORD_ VK_MULTIPLY_          = 0x6A;
+	static constexpr  DWORD_ VK_ADD_               = 0x6B;
+	static constexpr  DWORD_ VK_SEPARATOR_         = 0x6C;
+	static constexpr  DWORD_ VK_SUBTRACT_          = 0x6D;
+	static constexpr  DWORD_ VK_DECIMAL_           = 0x6E;
+	static constexpr  DWORD_ VK_DIVIDE_            = 0x6F;
+	static constexpr  DWORD_ VK_F1_                = 0x70;
+	static constexpr  DWORD_ VK_F2_                = 0x71;
+	static constexpr  DWORD_ VK_F3_                = 0x72;
+	static constexpr  DWORD_ VK_F4_                = 0x73;
+	static constexpr  DWORD_ VK_F5_                = 0x74;
+	static constexpr  DWORD_ VK_F6_                = 0x75;
+	static constexpr  DWORD_ VK_F7_                = 0x76;
+	static constexpr  DWORD_ VK_F8_                = 0x77;
+	static constexpr  DWORD_ VK_F9_                = 0x78;
+	static constexpr  DWORD_ VK_F10_               = 0x79;
+	static constexpr  DWORD_ VK_F11_               = 0x7A;
+	static constexpr  DWORD_ VK_F12_               = 0x7B;
+	static constexpr  DWORD_ VK_F13_               = 0x7C;
+	static constexpr  DWORD_ VK_F14_               = 0x7D;
+	static constexpr  DWORD_ VK_F15_               = 0x7E;
+	static constexpr  DWORD_ VK_F16_               = 0x7F;
+	static constexpr  DWORD_ VK_F17_               = 0x80;
+	static constexpr  DWORD_ VK_F18_               = 0x81;
+	static constexpr  DWORD_ VK_F19_               = 0x82;
+	static constexpr  DWORD_ VK_F20_               = 0x83;
+	static constexpr  DWORD_ VK_F21_               = 0x84;
+	static constexpr  DWORD_ VK_F22_               = 0x85;
+	static constexpr  DWORD_ VK_F23_               = 0x86;
+	static constexpr  DWORD_ VK_F24_               = 0x87;
+	static constexpr  DWORD_ VK_NUMLOCK_           = 0x90;
+	static constexpr  DWORD_ VK_SCROLL_            = 0x91;
+	static constexpr  DWORD_ VK_LSHIFT_            = 0xA0;
+	static constexpr  DWORD_ VK_RSHIFT_            = 0xA1;
+	static constexpr  DWORD_ VK_LCONTROL_          = 0xA2;
+	static constexpr  DWORD_ VK_RCONTROL_          = 0xA3;
+	static constexpr  DWORD_ VK_LMENU_             = 0xA4;
+	static constexpr  DWORD_ VK_RMENU_             = 0xA5;
+	static constexpr  UINT_  MAPVK_VK_TO_VSC_      = 0;
+	static constexpr  UINT_  MAPVK_VSC_TO_VK_      = 1;
+	static constexpr  UINT_  MAPVK_VK_TO_CHAR_     = 2;
+	static constexpr  UINT_  MAPVK_VSC_TO_VK_EX_   = 3;
+
+	template <typename R = WORD_> static inline R _loword(DWORD_ dw) noexcept { return R(dw & 0x0000FFFF); }
+	template <typename R = WORD_> static inline R _hiword(DWORD_ dw) noexcept { return R((dw & 0xFFFF0000) >> 16); }
+
+	MPW_WINAPI HMODULE_  __stdcall LoadLibraryA(LPCSTR_);
+	MPW_WINAPI BOOL_     __stdcall FreeLibrary(HMODULE_);
+	MPW_WINAPI FARPROC_  __stdcall GetProcAddress(HMODULE_, LPCSTR_);
+	MPW_WINAPI BOOL_     __stdcall wglCopyContext(HGLRC_, HGLRC_, UINT_);
+	MPW_WINAPI HGLRC_    __stdcall wglCreateContext(HDC_);
+	MPW_WINAPI HGLRC_    __stdcall wglCreateLayerContext(HDC_, int);
+	MPW_WINAPI BOOL_     __stdcall wglDeleteContext(HGLRC_);
+	MPW_WINAPI HGLRC_    __stdcall wglGetCurrentContext(void);
+	MPW_WINAPI HDC_      __stdcall wglGetCurrentDC(void);
+	MPW_WINAPI PROC_     __stdcall wglGetProcAddress(LPCSTR_);
+	MPW_WINAPI BOOL_     __stdcall wglMakeCurrent(HDC_, HGLRC_);
+	MPW_WINAPI BOOL_     __stdcall wglShareLists(HGLRC_, HGLRC_);
+	MPW_WINAPI ATOM_     __stdcall RegisterClassExA(WNDCLASSEXA_ const *);
+	MPW_WINAPI HMODULE_  __stdcall GetModuleHandleA(LPCSTR_);
+	MPW_WINAPI LRESULT_  __stdcall DefWindowProcA(HWND_, UINT_, WPARAM_, LPARAM_);
+	MPW_WINAPI HWND_     __stdcall CreateWindowExA(DWORD_, LPCSTR_, LPCSTR_, DWORD_, int, int, int, int, HWND_, HMENU_, HINSTANCE_, void * param);
+	MPW_WINAPI int       __stdcall ReleaseDC(HWND_, HDC_);
+	MPW_WINAPI BOOL_     __stdcall DestroyWindow(HWND_);
+	MPW_WINAPI HDC_      __stdcall GetDC(HWND_);
+	MPW_WINAPI BOOL_     __stdcall SetPixelFormat(HDC_, int, PIXELFORMATDESCRIPTOR_ const *);
+	MPW_WINAPI int       __stdcall ChoosePixelFormat(HDC_, PIXELFORMATDESCRIPTOR_ const *);
+	MPW_WINAPI int       __stdcall DescribePixelFormat(HDC_, int, UINT_, PIXELFORMATDESCRIPTOR_ *);
+	MPW_WINAPI LONG_     __stdcall GetWindowLongA(HWND_, int);
+	MPW_WINAPI LONG_     __stdcall SetWindowLongA(HWND_, int, LONG_);
+  #ifdef _WIN64
+	MPW_WINAPI LONG_PTR_ __stdcall GetWindowLongPtrA(HWND_, int);
+	MPW_WINAPI LONG_PTR_ __stdcall SetWindowLongPtrA(HWND_, int, LONG_PTR_);
+  #else
+	static inline LONG_PTR_ __stdcall GetWindowLongPtrA(HWND_ hwnd, int gwl) { return (LONG_PTR_)GetWindowLongA(hwnd, gwl); }
+	static inline LONG_PTR_ __stdcall SetWindowLongPtrA(HWND_ hwnd, int gwl, LONG_PTR_ lp) { return (LONG_PTR_)SetWindowLongA(hwnd, gwl, LONG_(lp)); }
+  #endif
+	MPW_WINAPI BOOL_     __stdcall SwapBuffers(HDC_);
+	MPW_WINAPI BOOL_     __stdcall GetMessageA(MSG_ *, HWND_, UINT_, UINT_);
+	MPW_WINAPI BOOL_     __stdcall PeekMessageA(MSG_ *, HWND_, UINT_, UINT_, UINT_);
+	MPW_WINAPI BOOL_     __stdcall TranslateMessage(MSG_ const *);
+	MPW_WINAPI LRESULT_  __stdcall DispatchMessageA(MSG_ const *);
+	MPW_WINAPI HCURSOR_  __stdcall LoadCursorA(HINSTANCE_, LPCSTR_);
+	MPW_WINAPI HICON_    __stdcall LoadIconA(HINSTANCE_, LPCSTR_);
+	MPW_WINAPI BOOL_     __stdcall ShowWindow(HWND_, int);
+	MPW_WINAPI BOOL_     __stdcall SetWindowPos(HWND_, HWND_, int, int, int, int, UINT_);
+	MPW_WINAPI BOOL_     __stdcall AdjustWindowRectEx(RECT_ *, DWORD_, BOOL_, DWORD_);
+	MPW_WINAPI BOOL_     __stdcall ScreenToClient(HWND_, POINT_ *);
+	MPW_WINAPI UINT_     __stdcall MapVirtualKeyA(UINT_, UINT_);
+	MPW_WINAPI SHORT_    __stdcall GetKeyState(int);
+	MPW_WINAPI SHORT_    __stdcall GetAsyncKeyState(int);
+	MPW_WINAPI BOOL_     __stdcall GetCursorPos(POINT_ *);
+	MPW_WINAPI BOOL_     __stdcall SetCursorPos(int, int);
+	MPW_WINAPI int       __stdcall ShowCursor(BOOL_);
+	MPW_WINAPI HWND_     __stdcall GetDesktopWindow();
+	MPW_WINAPI BOOL_     __stdcall GetWindowPlacement(HWND_, WINDOWPLACEMENT_ *);
+
+} // namespace _win
+
+namespace _ {
+
+using DWORD_ = mw::_win::DWORD_;
+
+static key
+_map_key(DWORD_ key_code_, DWORD_ scancode_ = 0)
+{
+	using namespace mw::_win;
+	switch(key_code_)
+	{
+		case VK_CANCEL_:        return key_cancel;
+		case VK_BACK_:          return key_backspace;
+		case VK_TAB_:           return key_tab;
+		case VK_CLEAR_:         return key_clear;
+		case VK_RETURN_:        return (scancode_ & 0x01000000) ? key_num_enter : key_enter;
+		case VK_LSHIFT_:        return key_lshift;
+		case VK_RSHIFT_:        return key_rshift;
+		case VK_LCONTROL_:      return key_lcontrol;
+		case VK_RCONTROL_:      return key_rcontrol;
+		case VK_LMENU_:         return key_lalt;
+		case VK_RMENU_:         return key_ralt;
+		case VK_APPS_:          return key_menu;
+		case VK_LWIN_:          return key_lcommand;
+		case VK_RWIN_:          return key_rcommand;
+		case VK_PAUSE_:         return key_pause;
+		case VK_NUMLOCK_:       return key_num_lock;
+		case VK_CAPITAL_:       return key_caps_lock;
+		case VK_SCROLL_:        return key_scroll_lock;
+		case VK_ESCAPE_:        return key_escape;
+		case VK_SPACE_:         return key_space;
+		case VK_PRIOR_:         return (scancode_ & 0x01000000) ? key_page_up : key_num_page_up;
+		case VK_NEXT_:          return (scancode_ & 0x01000000) ? key_page_down : key_num_page_down;
+		case VK_END_:           return (scancode_ & 0x01000000) ? key_end : key_num_end;
+		case VK_HOME_:          return (scancode_ & 0x01000000) ? key_home : key_num_home;
+		case VK_LEFT_:          return (scancode_ & 0x01000000) ? key_left : key_num_left;
+		case VK_RIGHT_:         return (scancode_ & 0x01000000) ? key_right : key_num_right;
+		case VK_UP_:            return (scancode_ & 0x01000000) ? key_up : key_num_up;
+		case VK_DOWN_:          return (scancode_ & 0x01000000) ? key_down : key_num_down;
+		case VK_SELECT_:        return key_select;
+		case VK_EXECUTE_:       return key_execute;
+		case VK_SNAPSHOT_:      return key_print;
+		case VK_INSERT_:        return (scancode_ & 0x01000000) ? key_insert : key_num_insert;
+		case VK_DELETE_:        return (scancode_ & 0x01000000) ? key_delete : key_num_delete;
+		case VK_HELP_:          return key_help;
+		case VK_F1_:            return key_f1;
+		case VK_F2_:            return key_f2;
+		case VK_F3_:            return key_f3;
+		case VK_F4_:            return key_f4;
+		case VK_F5_:            return key_f5;
+		case VK_F6_:            return key_f6;
+		case VK_F7_:            return key_f7;
+		case VK_F8_:            return key_f8;
+		case VK_F9_:            return key_f9;
+		case VK_F10_:           return key_f10;
+		case VK_F11_:           return key_f11;
+		case VK_F12_:           return key_f12;
+		case VK_NUMPAD0_:       return key_num_0;
+		case VK_NUMPAD1_:       return key_num_1;
+		case VK_NUMPAD2_:       return key_num_2;
+		case VK_NUMPAD3_:       return key_num_3;
+		case VK_NUMPAD4_:       return key_num_4;
+		case VK_NUMPAD5_:       return key_num_5;
+		case VK_NUMPAD6_:       return key_num_6;
+		case VK_NUMPAD7_:       return key_num_7;
+		case VK_NUMPAD8_:       return key_num_8;
+		case VK_NUMPAD9_:       return key_num_9;
+		case VK_DIVIDE_:        return key_num_divide;
+		case VK_MULTIPLY_:      return key_num_multiply;
+		case VK_SUBTRACT_:      return key_num_subtract;
+		case VK_ADD_:           return key_num_add;
+		case VK_DECIMAL_:       return key_num_decimal;
+		default:
+		{
+			UINT_ char_code = MapVirtualKeyA(key_code_, MAPVK_VK_TO_CHAR_);
+			switch(char_code)
+			{
+				case '`':  return key_back_tick;
+				case '~':  return key_tilde;
+				case '1':  return key_1;
+				case '!':  return key_exclamation;
+				case '2':  return key_2;
+				case '@':  return key_at;
+				case '3':  return key_3;
+				case '#':  return key_numbersign;
+				case '4':  return key_4;
+				case '$':  return key_dollarsign;
+				case '5':  return key_5;
+				case '%':  return key_percent;
+				case '6':  return key_6;
+				case '^':  return key_circumflex;
+				case '7':  return key_7;
+				case '&':  return key_ampersand;
+				case '8':  return key_8;
+				case '*':  return key_asterisk;
+				case '9':  return key_9;
+				case '(':  return key_lparenthesis;
+				case '0':  return key_0;
+				case ')':  return key_rparenthesis;
+				case '-':  return key_minus;
+				case '_':  return key_underscore;
+				case '=':  return key_equal;
+				case '+':  return key_plus;
+				case '[':  return key_lbracket;
+				case '{':  return key_lbrace;
+				case ']':  return key_rbracket;
+				case '}':  return key_rbrace;
+				case '\\': return key_back_slash;
+				case '|':  return key_bar;
+				case ';':  return key_semicolon;
+				case ':':  return key_colon;
+				case '\'': return key_quote;
+				case '"':  return key_double_quote;
+				case ',':  return key_comma;
+				case '<':  return key_less;
+				case '.':  return key_period;
+				case '>':  return key_greater;
+				case '/':  return key_slash;
+				case '?':  return key_question;
+				case 'A':  return key_a;
+				case 'B':  return key_b;
+				case 'C':  return key_c;
+				case 'D':  return key_d;
+				case 'E':  return key_e;
+				case 'F':  return key_f;
+				case 'G':  return key_g;
+				case 'H':  return key_h;
+				case 'I':  return key_i;
+				case 'J':  return key_j;
+				case 'K':  return key_k;
+				case 'L':  return key_l;
+				case 'M':  return key_m;
+				case 'N':  return key_n;
+				case 'O':  return key_o;
+				case 'P':  return key_p;
+				case 'Q':  return key_q;
+				case 'R':  return key_r;
+				case 'S':  return key_s;
+				case 'T':  return key_t;
+				case 'U':  return key_u;
+				case 'V':  return key_v;
+				case 'W':  return key_w;
+				case 'X':  return key_x;
+				case 'Y':  return key_y;
+				case 'Z':  return key_z;
+			}
+			return key_other;
+		}
+	}
+}
+
+} // namespace _
+
+#else
+
+namespace _glx {
+
+	static constexpr int GLX_USE_GL_            = 1;
+	static constexpr int GLX_BUFFER_SIZE_       = 2;
+	static constexpr int GLX_LEVEL_             = 3;   
+	static constexpr int GLX_RGBA_              = 4;   
+	static constexpr int GLX_DOUBLEBUFFER_      = 5;
+	static constexpr int GLX_STEREO_            = 6;
+	static constexpr int GLX_AUX_BUFFERS_       = 7;
+	static constexpr int GLX_RED_SIZE_          = 8;
+	static constexpr int GLX_GREEN_SIZE_        = 9;
+	static constexpr int GLX_BLUE_SIZE_         = 10;
+	static constexpr int GLX_ALPHA_SIZE_        = 11;
+	static constexpr int GLX_DEPTH_SIZE_        = 12;
+	static constexpr int GLX_STENCIL_SIZE_      = 13;
+	static constexpr int GLX_ACCUM_RED_SIZE_    = 14;
+	static constexpr int GLX_ACCUM_GREEN_SIZE_  = 15;
+	static constexpr int GLX_ACCUM_BLUE_SIZE_   = 16;
+	static constexpr int GLX_ACCUM_ALPHA_SIZE_  = 17;
+
+	static constexpr int GLX_BAD_SCREEN_        = 1;
+	static constexpr int GLX_BAD_ATTRIBUTE_     = 2;
+	static constexpr int GLX_NO_EXTENSION_      = 3;
+	static constexpr int GLX_BAD_VISUAL_        = 4;
+	static constexpr int GLX_BAD_CONTEXT_       = 5;
+	static constexpr int GLX_BAD_VALUE_         = 6;
+	static constexpr int GLX_BAD_ENUM_          = 7;
+
+	using Display     = ::Display;
+	using XID         = size_t;
+	using GLXContext  = struct GLXContext_ *;
+	using GLXPixmap   = XID;
+	using GLXDrawable = XID;
+
+	using glx_proc_t = void (*)(void);
+	extern "C" glx_proc_t    glXGetProcAddress(unsigned char const * proc_name);
+	extern "C" XVisualInfo * glXChooseVisual(Display *dpy, int screen, int *attribList);
+	extern "C" GLXContext    glXCreateContext(Display *dpy, XVisualInfo *vis, GLXContext shareList, Bool direct);
+	extern "C" void          glXDestroyContext(Display *dpy, GLXContext ctx);
+	extern "C" Bool          glXMakeCurrent(Display *dpy, GLXDrawable drawable, GLXContext ct);
+	extern "C" void          glXCopyContext(Display *dpy, GLXContext src, GLXContext dst, unsigned long mask);
+	extern "C" void          glXSwapBuffers(Display *dpy, GLXDrawable drawable);
+	extern "C" GLXPixmap     glXCreateGLXPixmap(Display *dpy, XVisualInfo *visual, Pixmap pixmap);
+	extern "C" void          glXDestroyGLXPixmap(Display *dpy, GLXPixmap pixmap);
+	extern "C" Bool          glXQueryExtension(Display *dpy, int *errorb, int *event);
+	extern "C" Bool          glXQueryVersion(Display *dpy, int *maj, int *min);
+	extern "C" Bool          glXIsDirect(Display *dpy, GLXContext ctx);
+	extern "C" int           glXGetConfig(Display *dpy, XVisualInfo *visual, int attrib, int *value);
+	extern "C" GLXContext    glXGetCurrentContext();
+	extern "C" GLXDrawable   glXGetCurrentDrawable();
+	extern "C" void          glXWaitGL();
+	extern "C" void          glXWaitX();
+	extern "C" void          glXUseXFont(Font font, int first, int count, int list);
+
+} // namespace _glx
+
+namespace _ {
+
+static constexpr key
+_map_key(KeySym key_sym_)
+{
+	switch(key_sym_)
+	{
+		case XK_Cancel:        return key_cancel;
+		case XK_BackSpace:     return key_backspace;
+		case XK_Tab:           return key_tab;
+		case XK_KP_Begin:
+		case XK_Clear:         return key_clear;
+		case XK_Return:        return key_enter;
+		case XK_Shift_L:       return key_lshift;
+		case XK_Shift_R:       return key_rshift;
+		case XK_Control_L:     return key_lcontrol;
+		case XK_Control_R:     return key_rcontrol;
+		case XK_Alt_L:         return key_lalt;
+		case XK_Alt_R:         return key_ralt;
+		case XK_Menu:          return key_menu;
+		case XK_Super_L:       return key_lcommand;
+		case XK_Super_R:       return key_rcommand;
+		case XK_Pause:         return key_pause;
+		case XK_Num_Lock:      return key_num_lock;
+		case XK_Caps_Lock:     return key_caps_lock;
+		case XK_Scroll_Lock:   return key_scroll_lock;
+		case XK_Escape:        return key_escape;
+		case XK_space:         return key_space;
+		case XK_Prior:         return key_page_up;
+		case XK_Next:          return key_page_down;
+		case XK_End:           return key_end;
+		case XK_Home:          return key_home;
+		case XK_Left:          return key_left;
+		case XK_Right:         return key_right;
+		case XK_Up:            return key_up;
+		case XK_Down:          return key_down;
+		case XK_Select:        return key_select;
+		case XK_Execute:       return key_execute;
+		case XK_Print:         return key_print;
+		case XK_Insert:        return key_insert;
+		case XK_Delete:        return key_delete;
+		case XK_Help:          return key_help;
+		case XK_F1:            return key_f1;
+		case XK_F2:            return key_f2;
+		case XK_F3:            return key_f3;
+		case XK_F4:            return key_f4;
+		case XK_F5:            return key_f5;
+		case XK_F6:            return key_f6;
+		case XK_F7:            return key_f7;
+		case XK_F8:            return key_f8;
+		case XK_F9:            return key_f9;
+		case XK_F10:           return key_f10;
+		case XK_F11:           return key_f11;
+		case XK_F12:           return key_f12;
+		case XK_1:             return key_1;
+		case XK_2:             return key_2;
+		case XK_3:             return key_3;
+		case XK_4:             return key_4;
+		case XK_5:             return key_5;
+		case XK_6:             return key_6;
+		case XK_7:             return key_7;
+		case XK_8:             return key_8;
+		case XK_9:             return key_9;
+		case XK_0:             return key_0;
+		case XK_quoteleft:     return key_back_tick;
+		case XK_asciitilde:    return key_tilde;
+		case XK_exclam:        return key_exclamation;
+		case XK_at:            return key_at;
+		case XK_numbersign:    return key_numbersign;
+		case XK_dollar:        return key_dollarsign;
+		case XK_percent:       return key_percent;
+		case XK_asciicircum:   return key_circumflex;
+		case XK_ampersand:     return key_ampersand;
+		case XK_asterisk:      return key_asterisk;
+		case XK_parenleft:     return key_lparenthesis;
+		case XK_parenright:    return key_rparenthesis;
+		case XK_minus:         return key_minus;
+		case XK_underscore:    return key_underscore;
+		case XK_equal:         return key_equal;
+		case XK_plus:          return key_plus;
+		case XK_bracketleft:   return key_lbracket;
+		case XK_braceleft:     return key_lbrace;
+		case XK_bracketright:  return key_rbracket;
+		case XK_braceright:    return key_rbrace;
+		case XK_backslash:     return key_back_slash;
+		case XK_bar:           return key_bar;
+		case XK_semicolon:     return key_semicolon;
+		case XK_colon:         return key_colon;
+		case XK_quoteright:    return key_quote;
+		case XK_quotedbl:      return key_double_quote;
+		case XK_comma:         return key_comma;
+		case XK_less:          return key_less;
+		case XK_period:        return key_period;
+		case XK_greater:       return key_greater;
+		case XK_slash:         return key_slash;
+		case XK_question:      return key_question;
+		case XK_a:             return key_a;
+		case XK_b:             return key_b;
+		case XK_c:             return key_c;
+		case XK_d:             return key_d;
+		case XK_e:             return key_e;
+		case XK_f:             return key_f;
+		case XK_g:             return key_g;
+		case XK_h:             return key_h;
+		case XK_i:             return key_i;
+		case XK_j:             return key_j;
+		case XK_k:             return key_k;
+		case XK_l:             return key_l;
+		case XK_m:             return key_m;
+		case XK_n:             return key_n;
+		case XK_o:             return key_o;
+		case XK_p:             return key_p;
+		case XK_q:             return key_q;
+		case XK_r:             return key_r;
+		case XK_s:             return key_s;
+		case XK_t:             return key_t;
+		case XK_u:             return key_u;
+		case XK_v:             return key_v;
+		case XK_w:             return key_w;
+		case XK_x:             return key_x;
+		case XK_y:             return key_y;
+		case XK_z:             return key_z;
+		case XK_KP_0:          return key_num_0;
+		case XK_KP_1:          return key_num_1;
+		case XK_KP_2:          return key_num_2;
+		case XK_KP_3:          return key_num_3;
+		case XK_KP_4:          return key_num_4;
+		case XK_KP_5:          return key_num_5;
+		case XK_KP_6:          return key_num_6;
+		case XK_KP_7:          return key_num_7;
+		case XK_KP_8:          return key_num_8;
+		case XK_KP_9:          return key_num_9;
+		case XK_KP_Divide:     return key_num_divide;
+		case XK_KP_Multiply:   return key_num_multiply;
+		case XK_KP_Subtract:   return key_num_subtract;
+		case XK_KP_Add:        return key_num_add;
+		case XK_KP_Enter:      return key_num_enter;
+		case XK_KP_Decimal:    return key_num_decimal;
+		case XK_KP_Delete:     return key_num_delete;
+		case XK_KP_Insert:     return key_num_insert;
+		case XK_KP_Home:       return key_num_home;
+		case XK_KP_End:        return key_num_end;
+		case XK_KP_Page_Up:    return key_num_page_up;
+		case XK_KP_Page_Down:  return key_num_page_down;
+		case XK_KP_Left:       return key_num_left;
+		case XK_KP_Right:      return key_num_right;
+		case XK_KP_Up:         return key_num_up;
+		case XK_KP_Down:       return key_num_down;
+		default:               return key_other;
+	}
+}
+
+} // namespace _
+
+#endif
 
 } // namespace mw
 

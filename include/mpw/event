@@ -20,8 +20,8 @@ enum class event_type
 struct Event
 {
   #ifdef _WIN32
-	using MSG = mw::_win::MSG;
-	MSG      _winmsg {};
+	using MSG_ = mw::_win::MSG_;
+	MSG_     _winmsg {};
   #else
   	::XEvent _xevent {};
   #endif
