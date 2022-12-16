@@ -2,6 +2,8 @@
 #include <ds/all>
 #include <coregl>
 
+namespace gl { using namespace coregl::GL; };
+
 int main()
 {
 	ds_try {
@@ -69,10 +71,7 @@ int main()
 		};
 		window.enable_vsync();
 		assert(window.show());
-		{
-			using namespace coregl::GL;
-			mw::log << (char const *)get_string(_version) << mw::endl;
-		}
+		mw::log << (char const *)gl::get_string(gl::_version) << mw::endl;
 		mw::log << "testing: get_cursor_position -- using left mouse button" << mw::endl;
 		mw::log << "testing: set_cursor_position -- using right mouse button" << mw::endl;
 		mw::log << "testing: show_cursor -- using key h" << mw::endl;
@@ -97,9 +96,9 @@ int main()
 				float v1 = 0.5f * (1.f + cos(ct));
 				float v2 = 0.5f * (1.f + sin(1.38f * ct));
 				float v3 = 0.5f * (1.f + cos(-0.9f * ct));
-				using namespace coregl::GL;
-				clear_color(v1, v2, v3, 1.f);
-				clear(_color_buffer_bit | _depth_buffer_bit);
+				// using namespace coregl::GL;
+				gl::clear_color(v1, v2, v3, 1.f);
+				gl::clear(gl::_color_buffer_bit | gl::_depth_buffer_bit);
 				window.swap();
 			}
 		}
