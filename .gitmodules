@@ -4,3 +4,6 @@
 [submodule "dep/glfl"]
 	path = dep/glfl
 	url = https://github.com/defalt8/glfl
+[submodule "dep/coregl"]
+	path = dep/coregl
+	url = https://github.com/defalt8/coregl
