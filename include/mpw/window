@@ -77,7 +77,7 @@ class Window
 	bool               _raised     = false;
   #endif
 
-#ifdef _WIN32
+  #ifdef _WIN32
 	static LRESULT_ __stdcall 
 	_win_proc(HWND_ hwnd, UINT_ umsg, WPARAM_ wparam, LPARAM_ lparam)
 	{
@@ -226,7 +226,7 @@ class Window
 		return DefWindowProcA(hwnd, umsg, wparam, lparam);
 	};
 
-#else
+  #else
 	static ds::unordered_map<32,::Window,Window *> _map;
 	
 	bool
@@ -298,69 +298,77 @@ class Window
 		}
 	}
 
-#endif
+  #endif
 
 	friend bool process_event(Event & event) noexcept(false);
 
+	void
+	_on_destroy()
+	{
+		if(on_destroy)
+			on_destroy(*this);
+	}
+
 	void 
-	_on_move(int x_, int y_) noexcept
+	_on_move(int x_, int y_)
 	{
 		if(!_modif && (x_ != _x || y_ != _y))
 		{
 			_x = x_;
 			_y = y_;
 			if(on_move)
-				on_move(_x, _y);
+				on_move(*this, _x, _y);
 		}
 	}
 
 	void 
-	_on_size(int width_, int height_) noexcept
+	_on_size(int width_, int height_)
 	{
 		if(!_modif && (width_ != _width || height_ != _height))
 		{
 			_width  = width_;
 			_height = height_;
 			if(on_size)
-				on_size(_width, _height);
+				on_size(*this, _width, _height);
 		}
 	}
 
 	void
-	_on_mouse_button(int x_, int y_, mouse_button button_, bool down_) noexcept
+	_on_mouse_button(int x_, int y_, mouse_button button_, bool down_)
 	{
 		if(on_mouse_button)
-			on_mouse_button(x_, y_, button_, down_);
+			on_mouse_button(*this, x_, y_, button_, down_);
 	}
 
 	void
-	_on_mouse_move(int x_, int y_) noexcept
+	_on_mouse_move(int x_, int y_)
 	{
 		if(on_mouse_move)
-			on_mouse_move(x_, y_);
+			on_mouse_move(*this, x_, y_);
 	}
 
 	void
-	_on_mouse_wheel(int x_, int y_, int delta_, bool vertical_) noexcept
+	_on_mouse_wheel(int x_, int y_, int delta_, bool vertical_)
 	{
 		if(on_mouse_wheel)
-			on_mouse_wheel(x_, y_, delta_, vertical_);
+			on_mouse_wheel(*this, x_, y_, delta_, vertical_);
 	}
 
 	void
-	_on_key(key key_, bool down_) noexcept
+	_on_key(key key_, bool down_)
 	{
 		if(on_key)
-			on_key(key_, down_);
+			on_key(*this, key_, down_);
 	}
 
  public:
-	ds::callable<void(int,int)>  on_move;
-	ds::callable<void(int,int)>  on_size;
-	ds::callable<void(key,bool)> on_key;
-	ds::callable<void(int,int,mouse_button,bool)> on_mouse_button;
-	ds::callable<void(int,int)>                   on_mouse_move;
-	ds::callable<void(int,int,int,bool)>          on_mouse_wheel;
+	ds::callable<void(Window &)>          on_destroy;
+	ds::callable<void(Window &,int,int)>  on_move;
+	ds::callable<void(Window &,int,int)>  on_size;
+	ds::callable<void(Window &,key,bool)> on_key;
+	ds::callable<void(Window &,int,int,mouse_button,bool)> on_mouse_button;
+	ds::callable<void(Window &,int,int)>                   on_mouse_move;
+	ds::callable<void(Window &,int,int,int,bool)>          on_mouse_wheel;
 
  public:
 	~Window() noexcept
@@ -455,7 +463,7 @@ class Window
 			auto root_     = DefaultRootWindow(xdisplay_);
 			auto screen    = DefaultScreen(xdisplay_);
 			swa.colormap   = XCreateColormap(xdisplay_, root_, visual_->visual, AllocNone);
-			swa.event_mask = Expose | StructureNotifyMask | VisibilityChangeMask | ClientMessage
+			swa.event_mask = StructureNotifyMask | VisibilityChangeMask | ClientMessage
 			               | ButtonPressMask | ButtonReleaseMask | PointerMotionMask 
 			               | KeyPressMask | KeyReleaseMask;
 			swa.background_pixel = XWhitePixel(xdisplay_, screen);
@@ -490,6 +498,7 @@ class Window
 		{
 			using namespace mw::_win;
 			_destroying = true;
+			this->_on_destroy();
 			if(_winglctx != NULL)
 			{
 				wglMakeCurrent(NULL, NULL);
@@ -505,21 +514,20 @@ class Window
 		}
 	  #else
 		auto display_valid_ = _display != nullptr && _display->_xdisplay != nullptr;
-		if(_xcontext != nullptr)
-		{
-			if(display_valid_)
-			{
-				using namespace mw::_glx;
-				glXMakeCurrent(_display->_xdisplay, None, nullptr);
-				glXDestroyContext(_display->_xdisplay, _xcontext);
-			}
-			_xcontext = nullptr;
-		}
+		
 	  	if(_xwindow != _null_xwindow)
 		{
 			if(display_valid_)
 			{
 				_destroying = true;
+				this->_on_destroy();
+				if(_xcontext != nullptr)
+				{
+					using namespace mw::_glx;
+					glXMakeCurrent(_display->_xdisplay, None, nullptr);
+					glXDestroyContext(_display->_xdisplay, _xcontext);
+					_xcontext = nullptr;
+				}
 				XDestroyWindow(_display->_xdisplay, _xwindow);
 				_destroying = false;
 			}

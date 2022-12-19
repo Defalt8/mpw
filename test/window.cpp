@@ -15,12 +15,13 @@ int main()
 		mw::display display; 
 		mw::event   event;
 		mw::window  window(display, "main window", 640, 480);
-		// window.on_move = [&](int x, int y) { mw::log << "posi " << x << " " << y << mw::endl; };
-		// window.on_size = [&](int w, int h) { mw::log << "size " << w << " " << h << mw::endl; };
-		// window.on_mouse_button = [&](int x, int y, mw::mouse_button btn, bool down) { mw::log << "mouse button " << cstr_mouse_button(btn) << " " << down << "  " << x << " " << y << mw::endl; };
-		// window.on_mouse_move   = [&](int x, int y) { mw::log << "mouse move " << "  " << x << " " << y << mw::endl; };
-		// window.on_mouse_wheel  = [&](int x, int y, int delta, bool vertical) { mw::log << "mouse wheel " << x << " " << y << " " << delta << " " << vertical << mw::endl; };
-		// window.on_key = [&](mw::key key, bool down) { mw::log << "key " << cstr_key(key) << " " << down << mw::endl; };
+		// window.on_destroy = [&](mw::window & window) { mw::log << "on destroy" << mw::endl; };
+		// window.on_move = [&](mw::window & window, int x, int y) { mw::log << "posi " << x << " " << y << mw::endl; };
+		// window.on_size = [&](mw::window & window, int w, int h) { mw::log << "size " << w << " " << h << mw::endl; };
+		// window.on_mouse_button = [&](mw::window & window, int x, int y, mw::mouse_button btn, bool down) { mw::log << "mouse button " << cstr_mouse_button(btn) << " " << down << "  " << x << " " << y << mw::endl; };
+		// window.on_mouse_move   = [&](mw::window & window, int x, int y) { mw::log << "mouse move " << "  " << x << " " << y << mw::endl; };
+		// window.on_mouse_wheel  = [&](mw::window & window, int x, int y, int delta, bool vertical) { mw::log << "mouse wheel " << x << " " << y << " " << delta << " " << vertical << mw::endl; };
+		// window.on_key = [&](mw::window & window, mw::key key, bool down) { mw::log << "key " << cstr_key(key) << " " << down << mw::endl; };
 		bool mbtn_left_down  = false;
 		bool mbtn_right_down = false;
 		int  pwin_x = 0, pwin_y = 0;
@@ -32,7 +33,7 @@ int main()
 		int  rwin_x = 0, rwin_y = 0;
 		int  rwin_w = 0, rwin_h = 0;
 		mw::window_style rstyle {};
-		window.on_key = [&](mw::key key, bool down)
+		window.on_key = [&](mw::window & window, mw::key key, bool down)
 		{
 			if(key == mw::key_h)
 			{
@@ -94,7 +95,7 @@ int main()
 				}
 			}
 		};
-		window.on_mouse_button = [&](int x, int y, mw::mouse_button btn, bool down) 
+		window.on_mouse_button = [&](mw::window & window, int x, int y, mw::mouse_button btn, bool down) 
 		{
 			if(btn == mw::mb_left)
 			{
@@ -112,7 +113,7 @@ int main()
 				window.get_cursor_position(rbtn_x, rbtn_y);
 			}
 		};
-		window.on_mouse_move   = [&](int x, int y) 
+		window.on_mouse_move   = [&](mw::window & window, int x, int y) 
 		{
 			if(mbtn_right_down)
 			{
